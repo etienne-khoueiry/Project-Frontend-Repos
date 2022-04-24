@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,26 +15,43 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import User from "../../../../../Models/User";
 import { CreateUser } from "../../../../../Services/UserApiCalls";
 import { CircularProgress } from "@mui/material";
+import { Context } from "../../../../../Contexts/Context";
 
-export default function SignUp() {
-  
+export interface IProps {
+  onLoadingHandler(loading: boolean): void;
+}
+
+export default function SignUp(props: IProps) {
   const firstNameRef = useRef<any>();
   const lastNameRef = useRef<any>();
   const usernameRef = useRef<any>();
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
 
-  const handleSubmit = (event: any) => {
+  const { setOpenModal, setIsValid, setSnackbarInfo } = useContext(Context);
+
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     // const data = new FormData(event.currentTarget); //useRef or this?
+
     var user: User = {
-      username: usernameRef.current.value,
-      lastname: lastNameRef.current.value,
-      firstname: firstNameRef.current.value,
-      email: emailRef.current.value,
-      password: passwordRef.current.value,
+      userUsername: usernameRef.current.value,
+      userLastName: lastNameRef.current.value,
+      userFirstName: firstNameRef.current.value,
+      userEmail: emailRef.current.value,
+      userPassword: passwordRef.current.value,
     };
-    var result = CreateUser(user);
+
+    var result = await CreateUser(user);
+
+    if (result) {
+      props.onLoadingHandler(false);
+      setIsValid(true);
+      setOpenModal(false);
+      setSnackbarInfo({ message: "Login Succesful!", open: true });
+    } else {
+      console.log("error");
+    }
   };
 
   return (

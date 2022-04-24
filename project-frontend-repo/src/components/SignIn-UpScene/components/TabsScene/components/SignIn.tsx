@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,33 +14,69 @@ import Container from "@mui/material/Container";
 import { IsUserExists } from "../../../../../Services/UserApiCalls";
 import UserExists from "../../../../../Models/UserExists";
 import { useNavigate } from "react-router";
+import { Context } from "../../../../../Contexts/Context";
+import User from "../../../../../Models/User";
 
-export default function SignIn() {
+export interface IProps {
+  onLoadingHandler(loading: boolean): void;
+}
+
+export default function SignIn(props: IProps) {
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
 
-  const [isValid, setIsValid] = useState<boolean>();
+  // const [isValid, setIsValid] = useState<boolean>();
+
+  const { setOpenModal, isValid, setIsValid, setSnackbarInfo, isFirstTime, setIsFirstTime } =
+    useContext(Context);
+
+    const storingUserData = useCallback((user: any) => {
+      localStorage.setItem("UserSID", user.usersSID);  
+      localStorage.setItem("UserFirstName", user.userFirstName);  
+      localStorage.setItem("UserLastName", user.userLastName);  
+      localStorage.setItem("UserUsername", user.userUsername);  
+    }, []);
+
+    useEffect( () => {
+      setIsFirstTime(true);
+    }, [])
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+
     const data = new FormData(event.currentTarget); //useRef or this.
+
     if (emailRef.current.value == "" || passwordRef.current.value == "") {
       setIsValid(false);
     } else {
+      props.onLoadingHandler(true);
+
       var user: UserExists = {
         email: emailRef.current.value,
         password: passwordRef.current.value,
       };
-      var result = await IsUserExists(user); //Changing it
-      if (result) {
-        console.log("Loading...");
-        setIsValid(false);
-        console.log(result);
-      } else {
-        console.log("vvvv");
-      }
+
+        var result = await IsUserExists(user); //Changing it
+
+        if (result) {
+          // console.log(result);
+          props.onLoadingHandler(false);
+          setIsValid(true);
+          setOpenModal(false);
+          setSnackbarInfo({ message: "Login Succesful!", open: true });
+          // localStorage.setItem("UserId", result.valueOf());  
+          storingUserData(result);                           //Storing user object
+        } else {
+          props.onLoadingHandler(false);
+          setIsValid(false);
+          setIsFirstTime(false);
+        }
+
     }
+
   };
+
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -69,8 +105,8 @@ export default function SignIn() {
             autoComplete="email"
             autoFocus
             inputRef={emailRef}
-            error={isValid == false}
-            helperText={isValid == false ? "Required!" : " "}
+            error={isValid == false  && !isFirstTime}
+            helperText={isValid == false  && !isFirstTime ? "Required!" : " "}
           />
           <TextField
             margin="normal"
@@ -82,13 +118,10 @@ export default function SignIn() {
             id="password"
             autoComplete="current-password"
             inputRef={passwordRef}
-            error={isValid == false}
-            helperText={isValid == false ? "Required!" : " "}
+            error={isValid == false && !isFirstTime }
+            helperText={isValid == false && !isFirstTime ? "Required!" : " "}
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
+
           <Button
             type="submit"
             fullWidth

@@ -2,9 +2,12 @@ import User from "../Models/User";
 import axios from "axios";
 import UserExists from "../Models/UserExists";
 
-const CreateUser = (user: User) => {
+
+
+
+const CreateUser = async (user: User) : Promise<boolean> => {
   var data = JSON.stringify(user);
-  console.log(user);
+
   var config: any = {
     method: "post",
     url: "https://localhost:7181/users",
@@ -14,18 +17,22 @@ const CreateUser = (user: User) => {
     data: data,
   };
 
-  axios(config)
+  var result = false;
+  await axios(config)
     .then(function (response) {
-      console.log(response);
-      return response.data;
+      result = response.data;
     })
     .catch(function (error) {
-      console.log(error);
       return error;
     });
+    return await result;
 };
 
-async function IsUserExists(user: UserExists): Promise<boolean> {
+
+
+
+
+async function IsUserExists(user: UserExists): Promise<User | boolean> {
   var data = JSON.stringify(user);
 
   var config: any = {
@@ -38,11 +45,12 @@ async function IsUserExists(user: UserExists): Promise<boolean> {
   };
   var result = false;
   await axios(config)
-    .then(function (response) {
-      //   console.log(response.data);
+    .then(async function (response) {
+        // console.log(response.data);
       result = response.data;
     })
     .catch(function (error) {
+        // console.log("ccC")
       return error;
     });
 

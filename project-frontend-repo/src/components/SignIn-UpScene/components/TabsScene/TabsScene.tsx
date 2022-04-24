@@ -4,11 +4,16 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
-import { CircularProgress } from "@mui/material";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 export default function TabsScene() {
   const [value, setValue] = useState("signin");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLoading = (loading: boolean) => {
+    setIsLoading(loading);
+  };
+
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -25,27 +30,16 @@ export default function TabsScene() {
         <Tab value="signin" label="Sign In" />
         <Tab value="signup" label="Sign Up" />
       </Tabs>
-      <Box
-        sx={{
-          zIndex: 1000,
-          position: "absolute",
-          top: "50px",
-          left: "50%",
-          transform: "translate(-50%, 500%)",
-        }}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: 10000 }}
+        open={isLoading}
       >
-        {/* {isLoading && (
-          <CircularProgress
-            color="secondary"
-          />
-        )} */}
-      </Box>
+        <CircularProgress color="secondary" />
+      </Backdrop>
 
       <Box>
-        {" "}
-        {/*sx={{backgroundColor: "rgba(0,0,0,0.5)"}*/}
-        {value === "signup" && <SignUp />}
-        {value === "signin" && <SignIn />}
+        {value === "signup" && <SignUp onLoadingHandler={handleLoading}/>}
+        {value === "signin" && <SignIn onLoadingHandler={handleLoading} />}
       </Box>
     </Box>
   );
