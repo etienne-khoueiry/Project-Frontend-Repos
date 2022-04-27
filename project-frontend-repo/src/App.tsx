@@ -20,7 +20,6 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <ContextProvider>
-        <Navbar />
         <Routers />
       </ContextProvider>
     </ThemeProvider>

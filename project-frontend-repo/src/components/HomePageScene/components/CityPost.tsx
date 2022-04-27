@@ -1,5 +1,4 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -9,17 +8,13 @@ import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { deepOrange, red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
 import { Badge, Box, Button, Link, Stack, Tooltip } from "@mui/material";
-import Flags from "country-flag-icons/react/3x2";
 import ReactCountryFlag from "react-country-flag";
 import City from "../../../Models/City";
 import {
+  RatingAvatarColor,
   RatingBetween0And2,
   RatingBetween2And4,
   RatingBetween4And6,
@@ -33,33 +28,33 @@ export interface IProps {
   City: City;
 }
 
-// const useStyles = makeStyles(
+// const useStyles = makeStyles(() =>
 //   createStyles({
-//     buttonDetails: {
-//       backgroundColor: "red",
+//     searchbar: {
+//       backgroundColor: "black",
+//       color: "white",
 //     },
 //   })
 // );
 
-const RatingAvatarColor = (rating: number): string => {
-  switch (rating != null) {
-    case rating < 2:
-      return RatingBetween0And2;
-    case rating >= 2 && rating < 4:
-      return RatingBetween2And4;
-    case rating >= 4 && rating < 6:
-      return RatingBetween4And6;
-    case rating >= 6 && rating < 9:
-      return RatingBetween6And9;
-    case rating >= 9 && rating <= 10:
-      return RatingBetween9And10;
-    default:
-      return "white";
-  }
-};
+const useStyles = makeStyles(
+  createStyles({
+    searchbar: {
+      backgroundColor: "black",
+      color: "white",
+    },
+  })
+);
+
+// const useStyles = makeStyles({
+//   buttonDetails: {},
+// });
+
+
 
 export default function CityPost(props: IProps) {
-  // const classes = useStyles();
+
+  const classes = useStyles();
 
   const navigate = useNavigate();
 
@@ -68,10 +63,8 @@ export default function CityPost(props: IProps) {
   const avatarRatingColor: string = RatingAvatarColor(City.Rating);
 
   const handleCityDetails = () => {
-    navigate('/City/1');
-  }
-
-  
+    navigate("/City/1");
+  };
 
   return (
     <Card>
@@ -114,8 +107,16 @@ export default function CityPost(props: IProps) {
             </Badge>
           </Tooltip>
         </IconButton>
-        <Box justifyContent={"flex-end"} alignContent={"right"} textAlign={"end"}>
-          <Button sx={{ backgroundColor: "secondary.main" }} onClick={handleCityDetails}>
+        <Box
+          justifyContent={"flex-end"}
+          alignContent={"right"}
+          textAlign={"end"}
+        >
+          <Button
+            // sx={{ backgroundColor: "secondary.main" }}
+            onClick={handleCityDetails}
+            className={classes.searchbar}
+          >
             More Details
           </Button>
         </Box>

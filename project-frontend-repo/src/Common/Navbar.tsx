@@ -21,6 +21,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { Context } from "../Contexts/Context";
 import { createStyles } from "@mui/material";
 import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
+import { useNavigate } from "react-router";
 
 const pages = ["Cities", "Favorites"];
 var settings = ["Login"];
@@ -33,6 +34,8 @@ const useStyles = createStyles({
 
 const Navbar = () => {
   // const classes = useStyles();
+
+  const navigate = useNavigate();
   const settingRef = useRef<any>();
   var { openDialog: openModal, setOpenDialog: setOpenModal, isValid, setIsValid } = useContext(Context);
 
@@ -98,6 +101,10 @@ const Navbar = () => {
     }
   };
 
+  const handleLogo = () => {
+    navigate("/");
+  }
+
   return (
     <div>
       <SignInUpLayout />
@@ -108,7 +115,8 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+              sx={{ mr: 2, display: { xs: "none", md: "flex", cursor: "pointer" } }}
+              onClick={handleLogo}
             >
               City Reviewing
             </Typography>
@@ -153,9 +161,10 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" }, cursor: "pointer" }}
+              onClick={handleLogo}
             >
-              LOGO
+              City Reviews
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (

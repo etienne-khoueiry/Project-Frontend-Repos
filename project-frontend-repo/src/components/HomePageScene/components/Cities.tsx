@@ -43,8 +43,8 @@ export default function Cities({}: Props) {
         <CityPostSkeleton />
       </Grid>
       <Grid item xs={12} sm={4} lg={3} xl={3}>
-            <CityPost City={cities[0]} />
-          </Grid> */}
+        <CityPost City={cities[0]} />
+      </Grid> */}
     </Grid>
   );
 }
