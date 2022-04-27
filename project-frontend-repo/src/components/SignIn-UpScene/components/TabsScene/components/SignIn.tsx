@@ -27,7 +27,7 @@ export default function SignIn(props: IProps) {
 
   // const [isValid, setIsValid] = useState<boolean>();
 
-  const { setOpenModal, isValid, setIsValid, setSnackbarInfo, isFirstTime, setIsFirstTime } =
+  const { setOpenDialog: setOpenModal, isValid, setIsValid, setSnackbarInfo, isFirstTime, setIsFirstTime } =
     useContext(Context);
 
     const storingUserData = useCallback((user: any) => {

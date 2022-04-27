@@ -19,12 +19,10 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
-        <ContextProvider>
-          <Navbar />
-          <Routers />
-        </ContextProvider>
-      </div>
+      <ContextProvider>
+        <Navbar />
+        <Routers />
+      </ContextProvider>
     </ThemeProvider>
   );
 }

@@ -1,8 +1,8 @@
 import React, { createContext, useRef, useState } from "react";
 
 export const Context = createContext({
-  openModal: false,
-  setOpenModal(open: boolean) {},
+  openDialog: false,
+  setOpenDialog(open: boolean) {},
   isValid: null,
   setIsValid(isValid: boolean){},
   snackbarInfo: {open: false, message: ''},
@@ -15,7 +15,7 @@ export const Context = createContext({
 
 const ContextProvider = (props: any) => {
 
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const [snackbarInfo, setSnackbarInfo] = useState<{open: boolean, message: string}>({open: false, message: ''});
@@ -23,8 +23,8 @@ const ContextProvider = (props: any) => {
   return (
     <Context.Provider
       value={{
-        openModal: openModal,
-        setOpenModal: setOpenModal,
+        openDialog: openDialog,
+        setOpenDialog: setOpenDialog,
         isValid: isValid, 
         setIsValid: setIsValid,
         snackbarInfo: snackbarInfo,

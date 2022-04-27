@@ -22,7 +22,7 @@ import { Context } from "../Contexts/Context";
 import { createStyles } from "@mui/material";
 import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Cities", "Favorites"];
 var settings = ["Login"];
 
 const useStyles = createStyles({
@@ -34,7 +34,7 @@ const useStyles = createStyles({
 const Navbar = () => {
   // const classes = useStyles();
   const settingRef = useRef<any>();
-  var { openModal, setOpenModal, isValid, setIsValid } = useContext(Context);
+  var { openDialog: openModal, setOpenDialog: setOpenModal, isValid, setIsValid } = useContext(Context);
 
   const [avatarNaming, setAvatarNaming] = useState<string | null>();
 
@@ -110,7 +110,7 @@ const Navbar = () => {
               component="div"
               sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
             >
-              LOGO
+              City Reviewing
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>

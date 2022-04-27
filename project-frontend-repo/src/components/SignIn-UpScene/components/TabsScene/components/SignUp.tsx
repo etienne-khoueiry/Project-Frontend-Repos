@@ -28,7 +28,7 @@ export default function SignUp(props: IProps) {
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
 
-  const { setOpenModal, setIsValid, setSnackbarInfo } = useContext(Context);
+  const { setOpenDialog: setOpenModal, setIsValid, setSnackbarInfo } = useContext(Context);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();

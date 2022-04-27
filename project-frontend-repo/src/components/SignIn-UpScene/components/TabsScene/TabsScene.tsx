@@ -4,7 +4,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop, CircularProgress, Divider, Grid } from "@mui/material";
 
 export default function TabsScene() {
   const [value, setValue] = useState("signin");
@@ -30,15 +30,13 @@ export default function TabsScene() {
         <Tab value="signin" label="Sign In" />
         <Tab value="signup" label="Sign Up" />
       </Tabs>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: 10000 }}
-        open={isLoading}
-      >
+      <Backdrop sx={{ color: "#fff", zIndex: 10000 }} open={isLoading}>
         <CircularProgress color="secondary" />
       </Backdrop>
 
       <Box>
-        {value === "signup" && <SignUp onLoadingHandler={handleLoading}/>}
+        {value === "signup" && <SignUp onLoadingHandler={handleLoading} />}
+        <Divider orientation="vertical" flexItem />
         {value === "signin" && <SignIn onLoadingHandler={handleLoading} />}
       </Box>
     </Box>
