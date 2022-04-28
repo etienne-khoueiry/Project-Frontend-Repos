@@ -3,10 +3,12 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import React from "react";
 import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
 
-type Props = {};
+export interface IProps {
+    generalRating: number;
+}
 
-export default function RatingAndFavoritesContainer({}: Props) {
-  const avatarRatingColor = RatingAvatarColor(2);
+export default function RatingAndFavoritesContainer(props: IProps) {
+  const avatarRatingColor = RatingAvatarColor(props.generalRating);
 
   return (
     <Box sx={{ margin: "10px" }}>
@@ -18,7 +20,7 @@ export default function RatingAndFavoritesContainer({}: Props) {
       >
         <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
           <Avatar sx={{ bgcolor: avatarRatingColor }} variant="square">
-            2
+            {props.generalRating}
           </Avatar>
         </Grid>
 

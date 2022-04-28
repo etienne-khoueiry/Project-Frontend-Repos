@@ -1,14 +1,16 @@
 import { Box } from "@mui/material";
 import React from "react";
 
-type Props = {};
+export interface IProps{
+    imageUrl: string;
+}
 
-export default function ImageContainer({}: Props) {
+export default function ImageContainer(props: IProps) {
   return (
     <Box sx={{ margin: "10px" }}>
       <img
         src={
-          "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
+          props.imageUrl
         }
         style={{ height: "50vh", width: "95%", marginLeft: "10px" }}
       />

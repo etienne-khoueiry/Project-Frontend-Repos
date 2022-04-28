@@ -2,9 +2,13 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 import ReactCountryFlag from "react-country-flag";
 
-type Props = {};
+export interface IProps {
+    cityName: string;
+    countryName: string;
+    countryCode: string
+}
 
-export default function NamingContainer({}: Props) {
+export default function NamingContainer(props: IProps) {
   return (
     <Box sx={{ margin: "10px", marginLeft: "20px" }}>
       <Box>
@@ -14,13 +18,13 @@ export default function NamingContainer({}: Props) {
           component="div"
           sx={{ fontWeight: "bold" }}
         >
-          CityName
+          {props.cityName}
         </Typography>
       </Box>
       <Box>
         <Typography variant="h6" gutterBottom component="div">
-          CountryName &nbsp;
-          <ReactCountryFlag countryCode="LB" svg />
+          {props.countryName} &nbsp;
+          <ReactCountryFlag countryCode={props.countryCode} svg />
         </Typography>
       </Box>
     </Box>

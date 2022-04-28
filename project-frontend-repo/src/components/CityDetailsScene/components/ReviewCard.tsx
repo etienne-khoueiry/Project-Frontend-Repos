@@ -16,12 +16,15 @@ import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRound
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
 import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
 import GradeRoundedIcon from "@mui/icons-material/GradeRounded";
+import { Review } from "../../../Models/Review";
 
+export interface IProps {
+    review: Review;
+}
 
-
-export const RatingList = () => {
-    
-  const avatarRatingColor = RatingAvatarColor(9);
+export const RatingList = (props: IProps) => {
+    const{review} = props;
+  const avatarRatingColor = RatingAvatarColor(review.RatingSID);
 
   return (
     <Grid
@@ -44,7 +47,7 @@ export const RatingList = () => {
           <GradeRoundedIcon />
           &nbsp; General Rating &nbsp;
           <Avatar sx={{ bgcolor: avatarRatingColor }} variant="square">
-            2
+            {review.RatingSID}
           </Avatar>
         </Box>
       </Grid>
@@ -119,7 +122,8 @@ export const RatingList = () => {
 
 
 
-export default function ReviewCard() {
+export default function ReviewCard(props: IProps) {
+    const {review} = props;
   return (
     <Card>
       <CardHeader
@@ -129,27 +133,25 @@ export default function ReviewCard() {
           </Avatar>
         }
         title="PersonName"
-        subheader="September 14, 2016"
+        subheader={review.ReviewDate}
       />
       <CardContent>
-        <RatingList />
+        <RatingList review={review}/>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {review.ReviewDescription}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <Tooltip title="4 Likes">
-            <Badge badgeContent={4} color="secondary">
+            <Badge badgeContent={review.ReviewLikes} color="secondary">
               <ThumbUpRoundedIcon />
             </Badge>
           </Tooltip>
         </IconButton>
         <IconButton aria-label="share">
           <Tooltip title="4 Dislikes">
-            <Badge badgeContent={4} color="secondary">
+            <Badge badgeContent={review.ReviewDislikes} color="secondary">
               <ThumbDownRoundedIcon />
             </Badge>
           </Tooltip>
