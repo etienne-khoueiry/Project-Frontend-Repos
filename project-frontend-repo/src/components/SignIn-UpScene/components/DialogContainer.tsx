@@ -1,14 +1,11 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
+import React from "react";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { Context } from "../../../Contexts/Context";
-import { Box, Fade, Grid, Modal, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import TabsScene from "./TabsScene/TabsScene";
 
@@ -18,10 +15,6 @@ export default function DialogContainer() {
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   var { openDialog: openModal, setOpenDialog: setOpenModal } =
     React.useContext(Context);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handleClose = () => {
     setOpenModal(false);
@@ -45,8 +38,7 @@ export default function DialogContainer() {
                 sx={{ cursor: "pointer", color: "red" }}
               />
             </Box>
-            <Box
-            sx={{ backgroundColor: "white", borderRadius: "10px"}}>
+            <Box sx={{ backgroundColor: "white", borderRadius: "10px" }}>
               <TabsScene />
             </Box>
           </DialogContent>

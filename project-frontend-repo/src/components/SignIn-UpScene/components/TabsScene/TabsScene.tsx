@@ -4,7 +4,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
-import { Backdrop, CircularProgress, Divider, Grid } from "@mui/material";
+import { Backdrop, CircularProgress, Divider } from "@mui/material";
 
 export default function TabsScene() {
   const [value, setValue] = useState("signin");

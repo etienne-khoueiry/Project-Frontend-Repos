@@ -1,4 +1,4 @@
-import { Alert, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import React from "react";
 import SignIn_UpScene from "../../components/SignIn-UpScene/SignIn_UpScene";
 import SnackbarComponent from "../../Common/SnackbarComponent";

@@ -1,10 +1,14 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -13,9 +17,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { IsUserExists } from "../../../../../Services/UserApiCalls";
 import UserExists from "../../../../../Models/UserExists";
-import { useNavigate } from "react-router";
 import { Context } from "../../../../../Contexts/Context";
-import User from "../../../../../Models/User";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
@@ -25,21 +27,25 @@ export default function SignIn(props: IProps) {
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
 
-  // const [isValid, setIsValid] = useState<boolean>();
+  const {
+    setOpenDialog: setOpenModal,
+    isValid,
+    setIsValid,
+    setSnackbarInfo,
+    isFirstTime,
+    setIsFirstTime,
+  } = useContext(Context);
 
-  const { setOpenDialog: setOpenModal, isValid, setIsValid, setSnackbarInfo, isFirstTime, setIsFirstTime } =
-    useContext(Context);
+  const storingUserData = useCallback((user: any) => {
+    localStorage.setItem("UserSID", user.usersSID);
+    localStorage.setItem("UserFirstName", user.userFirstName);
+    localStorage.setItem("UserLastName", user.userLastName);
+    localStorage.setItem("UserUsername", user.userUsername);
+  }, []);
 
-    const storingUserData = useCallback((user: any) => {
-      localStorage.setItem("UserSID", user.usersSID);  
-      localStorage.setItem("UserFirstName", user.userFirstName);  
-      localStorage.setItem("UserLastName", user.userLastName);  
-      localStorage.setItem("UserUsername", user.userUsername);  
-    }, []);
-
-    useEffect( () => {
-      setIsFirstTime(true);
-    }, [])
+  useEffect(() => {
+    setIsFirstTime(true);
+  }, []);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -56,27 +62,21 @@ export default function SignIn(props: IProps) {
         password: passwordRef.current.value,
       };
 
-        var result = await IsUserExists(user); //Changing it
+      var result = await IsUserExists(user); //Changing it
 
-        if (result) {
-          // console.log(result);
-          props.onLoadingHandler(false);
-          setIsValid(true);
-          setOpenModal(false);
-          setSnackbarInfo({ message: "Login Succesful!", open: true });
-          // localStorage.setItem("UserId", result.valueOf());  
-          storingUserData(result);                           //Storing user object
-        } else {
-          props.onLoadingHandler(false);
-          setIsValid(false);
-          setIsFirstTime(false);
-        }
-
+      if (result) {
+        props.onLoadingHandler(false);
+        setIsValid(true);
+        setOpenModal(false);
+        setSnackbarInfo({ message: "Login Succesful!", open: true });
+        storingUserData(result); //Storing user object
+      } else {
+        props.onLoadingHandler(false);
+        setIsValid(false);
+        setIsFirstTime(false);
+      }
     }
-
   };
-
-
 
   return (
     <Container component="main" maxWidth="xs">
@@ -105,8 +105,8 @@ export default function SignIn(props: IProps) {
             autoComplete="email"
             autoFocus
             inputRef={emailRef}
-            error={isValid == false  && !isFirstTime}
-            helperText={isValid == false  && !isFirstTime ? "Required!" : " "}
+            error={isValid == false && !isFirstTime}
+            helperText={isValid == false && !isFirstTime ? "Required!" : " "}
           />
           <TextField
             margin="normal"
@@ -118,7 +118,7 @@ export default function SignIn(props: IProps) {
             id="password"
             autoComplete="current-password"
             inputRef={passwordRef}
-            error={isValid == false && !isFirstTime }
+            error={isValid == false && !isFirstTime}
             helperText={isValid == false && !isFirstTime ? "Required!" : " "}
           />
 

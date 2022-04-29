@@ -5,16 +5,6 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 
-interface MainFeaturedPostProps {
-  post: {
-    description: string;
-    image: string;
-    imageText: string;
-    linkText: string;
-    title: string;
-  };
-}
-
 export default function WelcomeMessage() {
   const [welcomeMsg, setWelcomeMsg] = useState<string>("Welcome!");
 
@@ -51,7 +41,6 @@ export default function WelcomeMessage() {
         backgroundImage: `url(${"https://media.istockphoto.com/photos/london-skyline-and-primrose-hill-park-panorama-picture-id520047130?b=1&k=20&m=520047130&s=170667a&w=0&h=ljMiyvXFC7bWdOpPW3gX8DQJgZsalTcoukPBT0_OZs0="})`,
       }}
     >
-      {/* Increase the priority of the hero background image */}
       {
         <img
           style={{ display: "none" }}
@@ -69,7 +58,7 @@ export default function WelcomeMessage() {
           right: 0,
           left: 0,
           backgroundColor: "rgba(0,0,0,.3)",
-          borderRadius: "10px"
+          borderRadius: "10px",
         }}
       />
       <Grid container>

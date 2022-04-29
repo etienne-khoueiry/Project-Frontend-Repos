@@ -1,26 +1,17 @@
-import * as React from "react";
+import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
-import { Badge, Box, Button, Link, Stack, Tooltip } from "@mui/material";
+import { Badge, Box, Button, Stack, Tooltip } from "@mui/material";
 import ReactCountryFlag from "react-country-flag";
-import City from "../../../Models/City";
-import {
-  RatingAvatarColor,
-  RatingBetween0And2,
-  RatingBetween2And4,
-  RatingBetween4And6,
-  RatingBetween6And9,
-  RatingBetween9And10,
-} from "../../../Common/Utilities/RatingAvatarColor";
+import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
 import { makeStyles, createStyles } from "@mui/styles";
 import { useNavigate } from "react-router";
 import CityDTO from "../../../Models/CityDTO";
@@ -46,10 +37,6 @@ const useStyles = makeStyles(
     },
   })
 );
-
-// const useStyles = makeStyles({
-//   buttonDetails: {},
-// });
 
 export default function CityPost(props: IProps) {
   const classes = useStyles();

@@ -1,13 +1,10 @@
-import * as React from "react";
+import React from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import ImageIcon from "@mui/icons-material/Image";
-import WorkIcon from "@mui/icons-material/Work";
 import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
-import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";

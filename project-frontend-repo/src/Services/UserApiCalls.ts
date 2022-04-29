@@ -2,15 +2,14 @@ import User from "../Models/User";
 import axios from "axios";
 import UserExists from "../Models/UserExists";
 
+const baseUrl = "https://localhost:7181/users";
 
-
-
-const CreateUser = async (user: User) : Promise<boolean> => {
+const CreateUser = async (user: User): Promise<boolean> => {
   var data = JSON.stringify(user);
 
   var config: any = {
     method: "post",
-    url: "https://localhost:7181/users",
+    url: `${baseUrl}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -25,19 +24,15 @@ const CreateUser = async (user: User) : Promise<boolean> => {
     .catch(function (error) {
       return error;
     });
-    return await result;
+  return await result;
 };
-
-
-
-
 
 async function IsUserExists(user: UserExists): Promise<User | boolean> {
   var data = JSON.stringify(user);
 
   var config: any = {
     method: "post",
-    url: "https://localhost:7181/CheckUserIsExisting",
+    url: `${baseUrl}/CheckUserIsExisting`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -46,11 +41,9 @@ async function IsUserExists(user: UserExists): Promise<User | boolean> {
   var result = false;
   await axios(config)
     .then(async function (response) {
-        // console.log(response.data);
       result = response.data;
     })
     .catch(function (error) {
-        // console.log("ccC")
       return error;
     });
 

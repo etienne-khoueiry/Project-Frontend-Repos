@@ -4,19 +4,13 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
-import ThumbDownRoundedIcon from "@mui/icons-material/ThumbDownRounded";
 import {
-  Badge,
   Box,
   Button,
   Divider,
   Grid,
   TextField,
-  Tooltip,
 } from "@mui/material";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
@@ -53,38 +47,6 @@ export const RatingList = () => {
           padding: "5px",
         }}
       >
-        {/* {RatingCriteria.map((criteria, index) => {
-              <>
-            <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingRight: "5px"
-            
-          }}
-          key={index}
-        >
-          <HealthAndSafetyRoundedIcon />
-          {criteria}
-        </Box>
-        <Divider orientation="vertical" flexItem />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TextField
-            id="outlined-number"
-            label="Rating /10"
-            type="number"
-            key={index}
-          />
-        </Box>
-        </>
-          })} */}
 
         <Grid
           container
