@@ -6,4 +6,5 @@ export default interface CityDTO {
   city: City;
   country: Country;
   reviews: ReviewDTO[];
+  isFavorites: boolean;
 }

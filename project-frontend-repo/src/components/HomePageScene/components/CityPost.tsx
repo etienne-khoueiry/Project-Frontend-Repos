@@ -42,7 +42,6 @@ export default function CityPost(props: IProps) {
   const classes = useStyles();
 
   const navigate = useNavigate();
-
   const { City } = props;
 
   const avatarGeneralRatingColor: string = RatingAvatarColor(
@@ -82,11 +81,6 @@ export default function CityPost(props: IProps) {
         </Stack>
       </CardContent>
       <CardActions>
-        <IconButton aria-label="add to favorites">
-          <Tooltip title="Add To Favorites">
-            <FavoriteIcon sx={{ color: "red" }} />
-          </Tooltip>
-        </IconButton>
         <IconButton aria-label="share">
           <Tooltip title="Reviews">
             <Badge color="secondary" badgeContent={City.city.reviewNumber}>
@@ -95,9 +89,9 @@ export default function CityPost(props: IProps) {
           </Tooltip>
         </IconButton>
         <Box
+        display={"flex"}
           justifyContent={"flex-end"}
-          alignContent={"right"}
-          textAlign={"end"}
+          alignContent={"flex-end"}
         >
           <Button
             // sx={{ backgroundColor: "secondary.main" }}

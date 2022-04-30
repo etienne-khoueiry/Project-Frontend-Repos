@@ -1,5 +1,4 @@
-export default interface Rating {
-    ratingSID: number;
+export default interface CreateRatingDTO {
 	generalRating :number;
 	ratingHealth :number;
 	ratingEnvironment : number;

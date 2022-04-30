@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -23,8 +23,18 @@ export default function SignUp(props: IProps) {
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
 
-  const { setOpenDialog: setOpenModal, setIsValid, setSnackbarInfo } = useContext(Context);
+  const {
+    setOpenDialog: setOpenModal,
+    isValid,
+    setIsValid,
+    isFirstTime,
+    setIsFirstTime,
+    setSnackbarInfo,
+  } = useContext(Context);
 
+  useEffect(() => {
+    setIsFirstTime(true);
+  }, []);
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
@@ -36,15 +46,26 @@ export default function SignUp(props: IProps) {
       userPassword: passwordRef.current.value,
     };
 
-    var result = await CreateUser(user);
-
-    if (result) {
-      props.onLoadingHandler(false);
-      setIsValid(true);
-      setOpenModal(false);
-      setSnackbarInfo({ message: "Login Succesful!", open: true });
+    if (
+      user.userEmail == "" ||
+      user.userFirstName == "" ||
+      user.userLastName == "" ||
+      user.userPassword == "" ||
+      user.userUsername == ""
+    ) {
+      setIsValid(false);
+      setIsFirstTime(false);
     } else {
-      console.log("error");
+      var result = await CreateUser(user);
+
+      if (result) {
+        props.onLoadingHandler(false);
+        setIsValid(true);
+        setOpenModal(false);
+        setSnackbarInfo({ message: "Login Succesful!", open: true });
+      } else {
+        console.log("error");
+      }
     }
   };
 
@@ -82,6 +103,10 @@ export default function SignUp(props: IProps) {
                   label="First Name"
                   autoFocus
                   inputRef={firstNameRef}
+                  error={isValid == false && !isFirstTime}
+                  helperText={
+                    isValid == false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -93,6 +118,10 @@ export default function SignUp(props: IProps) {
                   name="lastName"
                   autoComplete="family-name"
                   inputRef={lastNameRef}
+                  error={isValid == false && !isFirstTime}
+                  helperText={
+                    isValid == false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -104,6 +133,10 @@ export default function SignUp(props: IProps) {
                   name="username"
                   autoComplete="username"
                   inputRef={usernameRef}
+                  error={isValid == false && !isFirstTime}
+                  helperText={
+                    isValid == false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -115,6 +148,10 @@ export default function SignUp(props: IProps) {
                   name="email"
                   autoComplete="email"
                   inputRef={emailRef}
+                  error={isValid == false && !isFirstTime}
+                  helperText={
+                    isValid == false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -127,6 +164,10 @@ export default function SignUp(props: IProps) {
                   id="password"
                   autoComplete="new-password"
                   inputRef={passwordRef}
+                  error={isValid == false && !isFirstTime}
+                  helperText={
+                    isValid == false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
             </Grid>

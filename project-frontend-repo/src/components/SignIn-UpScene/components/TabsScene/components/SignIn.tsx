@@ -34,6 +34,7 @@ export default function SignIn(props: IProps) {
     setSnackbarInfo,
     isFirstTime,
     setIsFirstTime,
+    setName
   } = useContext(Context);
 
   const storingUserData = useCallback((user: any) => {
@@ -41,6 +42,7 @@ export default function SignIn(props: IProps) {
     localStorage.setItem("UserFirstName", user.userFirstName);
     localStorage.setItem("UserLastName", user.userLastName);
     localStorage.setItem("UserUsername", user.userUsername);
+    setName(user.userFirstName + " " +user.userLastName);
   }, []);
 
   useEffect(() => {
@@ -50,10 +52,11 @@ export default function SignIn(props: IProps) {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget); //useRef or this.
+    // const data = new FormData(event.currentTarget); //useRef or this.
 
     if (emailRef.current.value == "" || passwordRef.current.value == "") {
       setIsValid(false);
+      setIsFirstTime(false);
     } else {
       props.onLoadingHandler(true);
 
@@ -70,6 +73,7 @@ export default function SignIn(props: IProps) {
         setOpenModal(false);
         setSnackbarInfo({ message: "Login Succesful!", open: true });
         storingUserData(result); //Storing user object
+
       } else {
         props.onLoadingHandler(false);
         setIsValid(false);

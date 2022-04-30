@@ -12,10 +12,10 @@ const GetCities = (): Promise<any> => {
   return axios(config);
 };
 
-const GetCityById = (id: number): Promise<any> => {
+const GetCityById = (id: number, userId: number): Promise<any> => {
   var config: any = {
     method: "get",
-    url: `${baseUrl}/${id}`,
+    url: `${baseUrl}/${id}/${userId}`,
     headers: {},
   };
 

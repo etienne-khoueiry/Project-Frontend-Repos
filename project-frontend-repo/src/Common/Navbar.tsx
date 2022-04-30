@@ -37,7 +37,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const settingRef = useRef<any>();
-  var { openDialog: openModal, setOpenDialog: setOpenModal, isValid, setIsValid } = useContext(Context);
+  var { openDialog: openModal, setOpenDialog: setOpenModal, isValid, setIsValid, setName } = useContext(Context);
 
   const [avatarNaming, setAvatarNaming] = useState<string | null>();
 
@@ -96,6 +96,7 @@ const Navbar = () => {
     if (settingRef.current.innerHTML === "Logout") {
       localStorage.clear();
       setIsValid(false);
+      setName("null")
     } else if (settingRef.current.innerHTML === "Login") {
       setOpenModal(!openModal);
     }
@@ -180,7 +181,7 @@ const Navbar = () => {
             {!isValid && (
               <Box sx={{ flexGrow: 0, mx: 2 }}>
                 <Button
-                  sx={{ backgroundColor: "#F9D342" }}
+                  sx={{ backgroundColor: "#F9D342", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
                   onClick={handleSigninModal}
                 >
                   Sign In

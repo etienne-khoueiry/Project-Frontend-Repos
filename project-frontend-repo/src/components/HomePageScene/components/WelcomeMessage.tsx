@@ -1,30 +1,32 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
+import { Context } from "../../../Contexts/Context";
 
 export default function WelcomeMessage() {
   const [welcomeMsg, setWelcomeMsg] = useState<string>("Welcome!");
 
-  useLayoutEffect(() => {
-    if (
-      localStorage.getItem("UserFirstName") &&
-      localStorage.getItem("UserLastName")
-    ) {
-      setWelcomeMsg(
-        `Welcome ${localStorage.getItem(
-          "UserFirstName"
-        )} ${localStorage.getItem("UserLastName")}!`
-      );
-    } else {
-      setWelcomeMsg(`Welcome!`);
-    }
-  }, [
-    localStorage.getItem("UserFirstName"),
-    localStorage.getItem("UserLastName"),
-  ]);
+  const {name} = useContext(Context);
+  // useLayoutEffect(() => {
+  //   if (
+  //     localStorage.getItem("UserFirstName") &&
+  //     localStorage.getItem("UserLastName")
+  //   ) {
+  //     setWelcomeMsg(
+  //       `Welcome ${localStorage.getItem(
+  //         "UserFirstName"
+  //       )} ${localStorage.getItem("UserLastName")}!`
+  //     );
+  //   } else {
+  //     setWelcomeMsg(`Welcome!`);
+  //   }
+  // }, [
+  //   localStorage.getItem("UserFirstName"),
+  //   localStorage.getItem("UserLastName"),
+  // ]);
 
   return (
     <Paper
@@ -77,7 +79,8 @@ export default function WelcomeMessage() {
               color="inherit"
               gutterBottom
             >
-              {welcomeMsg}
+              {!name.includes("null") && "Welcome " +name +"!"}
+              {name.includes("null") && "Welcome!"}
             </Typography>
           </Box>
         </Grid>

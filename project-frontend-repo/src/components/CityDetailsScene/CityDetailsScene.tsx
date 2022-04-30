@@ -1,7 +1,8 @@
 import AddCommentRoundedIcon from "@mui/icons-material/AddCommentRounded";
 import { Backdrop, Box, CircularProgress, Fab, Grid } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { Context } from "../../Contexts/Context";
 import { ReviewDTO } from "../../Models/ReviewDTO";
 import { GetCityById } from "../../Services/CitiesApiCalls";
 import ImageContainer from "./components/ImageContainer";
@@ -16,19 +17,23 @@ export interface IProps {
 }
 
 export default function CityDetailsScene() {
-
   const { id } = useParams();
+
+  const { setOpenDialog } = useContext(Context);
 
   const [city, setCity] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+
   useEffect(() => {
     var res: any = "";
+    var userId = Number(localStorage.getItem("UserSID")) ?? 0;
     const getCityById = async (id: number) => {
-      GetCityById(id)
+      GetCityById(id, userId)
         .then(async function (response: any) {
           res = await response.data;
           setCity(res);
+          // setReviews(city.reviews);
           setIsLoading(false);
         })
         .catch(function (error) {
@@ -42,17 +47,21 @@ export default function CityDetailsScene() {
   const [addNewReview, setAddNewReview] = useState<boolean>(false);
 
   const newReview = (
-    <>
+    <Grid container style={{ margin: 5 }}>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
       <Grid item lg={8} md={10} xs={10} sm={10}>
-        <NewReview />
+        <NewReview CitySID={Number(id)} />
       </Grid>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
-    </>
+    </Grid>
   );
 
   const handleNewReview = useCallback(() => {
-    setAddNewReview(true);
+    if (!localStorage.getItem("UserSID")) {
+      setOpenDialog(true);
+    } else {
+      setAddNewReview(true);
+    }
   }, []);
 
   if (isLoading) {
@@ -99,7 +108,7 @@ export default function CityDetailsScene() {
               </Grid>
               <Grid item xs={4} sm={4} md={4} lg={3} xl={3}>
                 <RatingAndFavoritesContainer
-                  generalRating={city?.city.generalRating}
+                  generalRating={city?.city.generalRating} isFavorites={city.isFavorites}
                 />
               </Grid>
             </Grid>
