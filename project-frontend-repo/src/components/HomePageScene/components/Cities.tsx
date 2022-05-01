@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import City from "../../../Models/City";
 import CityPost from "./CityPost";
 import CityPostSkeleton from "./Skeletons/CityPostSkeleton";
-import { GetCities } from "../../../Services/CitiesApiCalls";
+import { GetCities, GetCitiesByName } from "../../../Services/CitiesApiCalls";
 import CityDTO from "../../../Models/CityDTO";
+import { useParams } from "react-router";
+import { GetFavoritesByUserId } from "../../../Services/FavoritesApiCall";
 
 type Props = {};
 
-
-const Skeletons = ['', '', '', '', '', '', '', ''];
+const Skeletons = ["", "", "", "", "", "", "", ""];
 
 const useStyles = makeStyles(
   createStyles({
@@ -20,25 +21,63 @@ const useStyles = makeStyles(
   })
 );
 
-export default function Cities({}: Props) {
+export function NoResultsFound() {
+  return (
+    <Grid item xs={12}>
+      <Box
+        sx={{
+          height:"50vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4" component="div">
+          No Results Found!
+        </Typography>
+      </Box>
+    </Grid>
+  );
+}
 
+export default function Cities({}: Props) {
   const classes = useStyles();
+
+  const { id, search } = useParams();
 
   const [cities, setCities] = useState<CityDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    var res: any = '';
+    var res: any = "";
     const getCities = async () => {
-      GetCities()
-        .then(async function (response) {
-          res = await response.data;;
-          setCities(res);
-          setIsLoading(false);
-        })
-        .catch(function (error) {
-          res = error;
-        });
+      if (!id && !search) {
+        GetCities()
+          .then(async function (response) {
+            res = await response.data;
+            setCities(res);
+            setIsLoading(false);
+          })
+          .catch(function (error) {
+            res = error;
+          });
+      } else if(id) {
+        GetFavoritesByUserId(Number(id))
+          .then(async function (response) {
+            res = await response.data;
+            setCities(res);
+            setIsLoading(false);
+          })
+          .catch(function (error) {
+            res = error;
+          });
+      }else{
+        var cities = await GetCitiesByName(search);
+        if(cities){
+          setCities(cities);
+        }
+        setIsLoading(false);
+      }
     };
     getCities();
   }, []);
@@ -52,16 +91,19 @@ export default function Cities({}: Props) {
       alignItems={"flex-start"}
       className={classes.citiesStack}
     >
-      {!isLoading && cities.map((city, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
-          <CityPost City={city} key={index} />
-        </Grid>
-      ))}
-      {isLoading && Skeletons.map((s, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
-          <CityPostSkeleton />
-        </Grid>
-      ))}
+      {cities.length == 0 && !isLoading && <NoResultsFound />}
+      {!isLoading &&
+        cities.map((city, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
+            <CityPost City={city} key={index} />
+          </Grid>
+        ))}
+      {isLoading &&
+        Skeletons.map((s, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
+            <CityPostSkeleton />
+          </Grid>
+        ))}
     </Grid>
   );
 }

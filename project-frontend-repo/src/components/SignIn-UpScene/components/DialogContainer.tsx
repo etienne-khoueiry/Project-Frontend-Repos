@@ -26,12 +26,13 @@ export default function DialogContainer() {
         fullScreen={fullScreen}
         open={openModal}
         aria-labelledby="responsive-dialog-title"
+        
       >
         <Box sx={{ backgroundColor: "#eeeeee" }}>
           <DialogTitle id="responsive-dialog-title">
             {"Please Login to continue!"}
           </DialogTitle>
-          <DialogContent>
+          <DialogContent sx={{height: "100%"}}>
             <Box sx={{ position: "absolute", right: "5px", top: "5px" }}>
               <CloseRoundedIcon
                 onClick={handleClose}

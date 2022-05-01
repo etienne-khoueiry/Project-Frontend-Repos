@@ -36,7 +36,6 @@ export default function WelcomeMessage() {
         backgroundColor: "grey.800",
         color: "#fff",
         m: 1,
-        mt: 8,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",

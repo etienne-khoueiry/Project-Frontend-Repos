@@ -1,6 +1,6 @@
 export default interface CreateReviewDTO {
 	reviewDescription: string;
-	reviewDate: Date;
+	reviewDate: Date | string;
 	reviewLikes: number;
 	reviewDislikes: number;
 	ratingSID: number;

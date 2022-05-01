@@ -11,10 +11,15 @@ import Container from "@mui/material/Container";
 import User from "../../../../../Models/User";
 import { CreateUser } from "../../../../../Services/UserApiCalls";
 import { Context } from "../../../../../Contexts/Context";
+import { storingUserData } from "../../../../../Common/Utilities/StoringData";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
 }
+
+const containsNumber = (str: string) => {
+  return /\d/.test(str);
+};
 
 export default function SignUp(props: IProps) {
   const firstNameRef = useRef<any>();
@@ -30,6 +35,7 @@ export default function SignUp(props: IProps) {
     isFirstTime,
     setIsFirstTime,
     setSnackbarInfo,
+    setName,
   } = useContext(Context);
 
   useEffect(() => {
@@ -37,6 +43,7 @@ export default function SignUp(props: IProps) {
   }, []);
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+    props.onLoadingHandler(true);
 
     var user: User = {
       userUsername: usernameRef.current.value,
@@ -51,7 +58,10 @@ export default function SignUp(props: IProps) {
       user.userFirstName == "" ||
       user.userLastName == "" ||
       user.userPassword == "" ||
-      user.userUsername == ""
+      user.userUsername == "" ||
+      !user.userEmail.includes("@") ||
+      containsNumber(user.userFirstName) ||
+      containsNumber(user.userLastName)
     ) {
       setIsValid(false);
       setIsFirstTime(false);
@@ -63,8 +73,12 @@ export default function SignUp(props: IProps) {
         setIsValid(true);
         setOpenModal(false);
         setSnackbarInfo({ message: "Login Succesful!", open: true });
+        storingUserData(user);
+        setName(user.userFirstName + " " + user.userLastName);
       } else {
-        console.log("error");
+        props.onLoadingHandler(false);
+        setIsValid(false);
+        setIsFirstTime(false);
       }
     }
   };

@@ -22,10 +22,11 @@ import { useNavigate } from "react-router";
 
 export interface IProps {
   CitySID: number;
+  NewReviewHandler(newReview: any): any;
 }
 
 export default function NewReview(props: IProps) {
-  const { CitySID } = props;
+  const { CitySID, NewReviewHandler} = props;
 
   const navigate = useNavigate();
 
@@ -75,6 +76,7 @@ export default function NewReview(props: IProps) {
           Number(SecurityRating) +
           Number(TransportationRating)) /
         4;
+        console.log(generalRating);
       var rating: CreateRatingDTO = {
         generalRating: generalRating,
         ratingHealth: Number(HealthRating),
@@ -97,7 +99,18 @@ export default function NewReview(props: IProps) {
 
       var result = await CreateReview(review);
       if (result) {
-        navigate(`/City/${CitySID}`);
+        review.reviewDate = review.reviewDate.toLocaleString();
+        var newReview = {
+          rating: rating,
+          review: review,
+          user : {
+            usersSID: localStorage.getItem("UserSID"),
+            userFirstName: localStorage.getItem("UserFirstName"),
+            userLastName: localStorage.getItem("UserLastName"),
+            userEmail: localStorage.getItem("UserEmail")
+          }
+        }
+        NewReviewHandler(newReview);
       }
     }
   };

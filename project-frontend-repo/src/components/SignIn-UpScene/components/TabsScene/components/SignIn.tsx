@@ -18,6 +18,7 @@ import Container from "@mui/material/Container";
 import { IsUserExists } from "../../../../../Services/UserApiCalls";
 import UserExists from "../../../../../Models/UserExists";
 import { Context } from "../../../../../Contexts/Context";
+import { storingUserData } from "../../../../../Common/Utilities/StoringData";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
@@ -26,6 +27,7 @@ export interface IProps {
 export default function SignIn(props: IProps) {
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   const {
     setOpenDialog: setOpenModal,
@@ -37,46 +39,48 @@ export default function SignIn(props: IProps) {
     setName
   } = useContext(Context);
 
-  const storingUserData = useCallback((user: any) => {
-    localStorage.setItem("UserSID", user.usersSID);
-    localStorage.setItem("UserFirstName", user.userFirstName);
-    localStorage.setItem("UserLastName", user.userLastName);
-    localStorage.setItem("UserUsername", user.userUsername);
-    setName(user.userFirstName + " " +user.userLastName);
-  }, []);
-
+  // const storingUserData = useCallback((user: any) => {
+  //   localStorage.setItem("UserSID", user.usersSID);
+  //   localStorage.setItem("UserFirstName", user.userFirstName);
+  //   localStorage.setItem("UserLastName", user.userLastName);
+  //   localStorage.setItem("UserUsername", user.userUsername);
+  // }, []);
+  
   useEffect(() => {
     setIsFirstTime(true);
   }, []);
-
+  
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-
+    
     // const data = new FormData(event.currentTarget); //useRef or this.
-
-    if (emailRef.current.value == "" || passwordRef.current.value == "") {
+    
+    if (emailRef.current.value == "" || passwordRef.current.value == "" || !emailRef.current.value.includes("@")) {
       setIsValid(false);
       setIsFirstTime(false);
     } else {
+      
       props.onLoadingHandler(true);
 
       var user: UserExists = {
         email: emailRef.current.value,
         password: passwordRef.current.value,
       };
-
-      var result = await IsUserExists(user); //Changing it
-
+      
+      var result:any = await IsUserExists(user); //Changing it
+      
       if (result) {
         props.onLoadingHandler(false);
         setIsValid(true);
         setOpenModal(false);
         setSnackbarInfo({ message: "Login Succesful!", open: true });
         storingUserData(result); //Storing user object
-
+        setName(result.userFirstName + " " +result.userLastName);
+        
       } else {
         props.onLoadingHandler(false);
-        setIsValid(false);
+        setNotFound(true);
+        setIsValid(true);
         setIsFirstTime(false);
       }
     }
@@ -109,8 +113,8 @@ export default function SignIn(props: IProps) {
             autoComplete="email"
             autoFocus
             inputRef={emailRef}
-            error={isValid == false && !isFirstTime}
-            helperText={isValid == false && !isFirstTime ? "Required!" : " "}
+            error={(isValid == false && !isFirstTime) || notFound}
+            helperText={isValid == false && !isFirstTime ? "Required!" : notFound ? "Incorrect Email" : " "}
           />
           <TextField
             margin="normal"
@@ -122,8 +126,8 @@ export default function SignIn(props: IProps) {
             id="password"
             autoComplete="current-password"
             inputRef={passwordRef}
-            error={isValid == false && !isFirstTime}
-            helperText={isValid == false && !isFirstTime ? "Required!" : " "}
+            error={(isValid == false && !isFirstTime )|| notFound}
+            helperText={isValid == false && !isFirstTime ? "Required!" : notFound ? "Incorrect Email" : " "}
           />
 
           <Button
@@ -134,13 +138,6 @@ export default function SignIn(props: IProps) {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>

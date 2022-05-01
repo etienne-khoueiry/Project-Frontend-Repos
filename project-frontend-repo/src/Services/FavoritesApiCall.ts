@@ -39,4 +39,15 @@ const DeleteFromFavorites = async (CityId: number, UserId: number) => {
   return await result;
 };
 
-export { AddToFavorites, DeleteFromFavorites };
+const GetFavoritesByUserId = async (UserId: number) => {
+  var config: any = {
+    method: "get",
+    url: `${baseUrl}/${UserId}`,
+    headers: {},
+  };
+
+  return await axios(config);
+
+};
+
+export { AddToFavorites, DeleteFromFavorites, GetFavoritesByUserId };

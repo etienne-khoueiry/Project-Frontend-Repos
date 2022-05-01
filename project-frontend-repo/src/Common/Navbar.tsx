@@ -23,7 +23,7 @@ import { createStyles } from "@mui/material";
 import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
 import { useNavigate } from "react-router";
 
-const pages = ["Cities", "Favorites"];
+const pages = ["Favorites"];
 var settings = ["Login"];
 
 const useStyles = createStyles({
@@ -37,6 +37,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const settingRef = useRef<any>();
+  const pagesRef = useRef<any>();
   var { openDialog: openModal, setOpenDialog: setOpenModal, isValid, setIsValid, setName } = useContext(Context);
 
   const [avatarNaming, setAvatarNaming] = useState<string | null>();
@@ -81,6 +82,13 @@ const Navbar = () => {
   };
 
   const handleCloseNavMenu = () => {
+    if(pagesRef.current.innerText.toUpperCase() === "FAVORITES"){
+      if(localStorage.getItem("UserSID")){
+        navigate(`/Favorites/${localStorage.getItem("UserSID")}`)
+      }else{
+        setOpenModal(true);
+      }
+    }
     setAnchorElNav(null);
   };
 
@@ -96,7 +104,8 @@ const Navbar = () => {
     if (settingRef.current.innerHTML === "Logout") {
       localStorage.clear();
       setIsValid(false);
-      setName("null")
+      setName("null");
+      navigate("/");
     } else if (settingRef.current.innerHTML === "Login") {
       setOpenModal(!openModal);
     }
@@ -105,6 +114,8 @@ const Navbar = () => {
   const handleLogo = () => {
     navigate("/");
   }
+
+
 
   return (
     <div>
@@ -116,7 +127,7 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex", cursor: "pointer" } }}
+              sx={{ mr: 2, display: { xs: "none", md: "flex" }, cursor: "pointer", justifyContent: "flex-start" }}
               onClick={handleLogo}
             >
               City Reviewing
@@ -153,7 +164,7 @@ const Navbar = () => {
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                    <Typography textAlign="center" ref={pagesRef}>{page}</Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -173,12 +184,13 @@ const Navbar = () => {
                   key={page}
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: "white", display: "block" }}
+                  ref={pagesRef}
                 >
                   {page}
                 </Button>
               ))}
             </Box>
-            {!isValid && (
+            {/* {!isValid && (
               <Box sx={{ flexGrow: 0, mx: 2 }}>
                 <Button
                   sx={{ backgroundColor: "#F9D342", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
@@ -187,7 +199,7 @@ const Navbar = () => {
                   Sign In
                 </Button>
               </Box>
-            )}
+            )} */}
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

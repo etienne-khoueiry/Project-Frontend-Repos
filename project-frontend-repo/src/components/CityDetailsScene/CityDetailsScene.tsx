@@ -1,6 +1,6 @@
 import AddCommentRoundedIcon from "@mui/icons-material/AddCommentRounded";
 import { Backdrop, Box, CircularProgress, Fab, Grid } from "@mui/material";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { Context } from "../../Contexts/Context";
 import { ReviewDTO } from "../../Models/ReviewDTO";
@@ -23,34 +23,49 @@ export default function CityDetailsScene() {
 
   const [city, setCity] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [addNewReview, setAddNewReview] = useState<boolean>(false);
+  const reviews = useRef<any[]>([]);
 
 
-  useEffect(() => {
+  
+  
+  useLayoutEffect(() => {
     var res: any = "";
     var userId = Number(localStorage.getItem("UserSID")) ?? 0;
     const getCityById = async (id: number) => {
       GetCityById(id, userId)
-        .then(async function (response: any) {
-          res = await response.data;
-          setCity(res);
-          // setReviews(city.reviews);
-          setIsLoading(false);
-        })
-        .catch(function (error) {
-          res = error;
-        });
+      .then(async function (response: any) {
+        res = await response.data;
+        setCity(res);
+        // console.log(res);
+        // setReviews(res.reviews);
+        reviews.current = res.reviews;
+        setIsLoading(false);
+      })
+      .catch(function (error) {
+        res = error;
+      });
     };
-
+    
     getCityById(Number(id));
   }, []);
-
-  const [addNewReview, setAddNewReview] = useState<boolean>(false);
+  
+  const NewReviewHandler = useCallback((newReview: any) => {
+    // console.log(reviews);
+    // setReviews([...reviews, newReview]);
+        setIsLoading(true);
+        // console.log(reviews);
+    reviews.current = [...reviews.current, newReview];
+    setAddNewReview(false);
+    setIsLoading(false);
+  }, []);
+  
 
   const newReview = (
     <Grid container style={{ margin: 5 }}>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
       <Grid item lg={8} md={10} xs={10} sm={10}>
-        <NewReview CitySID={Number(id)} />
+        <NewReview CitySID={Number(id)} NewReviewHandler={NewReviewHandler}/>
       </Grid>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
     </Grid>
@@ -119,7 +134,7 @@ export default function CityDetailsScene() {
           <Grid item lg={8} md={10} xs={10} sm={10}>
             <Fab
               variant="extended"
-              sx={{ backgroundColor: "secondary.main" }}
+              sx={{ backgroundColor: "secondary.main", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
               onClick={handleNewReview}
             >
               <AddCommentRoundedIcon sx={{ mr: 1 }} />
@@ -129,7 +144,7 @@ export default function CityDetailsScene() {
           <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
 
           {addNewReview && newReview}
-          {city.reviews.map((review: ReviewDTO, index: number) => {
+          {reviews.current.map((review: ReviewDTO, index: number) => {
             return (
               <Grid key={index} container style={{ margin: 5 }}>
                 <Grid item lg={2} md={1} xs={1} sm={1}></Grid>

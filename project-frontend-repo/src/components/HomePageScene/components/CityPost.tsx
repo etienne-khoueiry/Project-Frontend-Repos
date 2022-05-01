@@ -80,7 +80,7 @@ export default function CityPost(props: IProps) {
           </Avatar>
         </Stack>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{justifyContent: "space-between"}}>
         <IconButton aria-label="share">
           <Tooltip title="Reviews">
             <Badge color="secondary" badgeContent={City.city.reviewNumber}>
@@ -94,9 +94,9 @@ export default function CityPost(props: IProps) {
           alignContent={"flex-end"}
         >
           <Button
-            // sx={{ backgroundColor: "secondary.main" }}
+            sx={{ backgroundColor: "secondary.main", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
             onClick={handleCityDetails}
-            className={classes.searchbar}
+            // className={classes.searchbar}
           >
             More Details
           </Button>

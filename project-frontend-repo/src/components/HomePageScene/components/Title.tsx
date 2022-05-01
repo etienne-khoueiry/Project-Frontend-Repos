@@ -1,8 +1,9 @@
 import { Fab, Grid, Typography } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useNavigate } from "react-router";
+import { Context } from "../../../Contexts/Context";
 
 type Props = {};
 
@@ -27,8 +28,15 @@ export default function Title({}: Props) {
 
   const navigate = useNavigate();
 
+
+  const {setOpenDialog} = useContext(Context);
+
   const handleNewCity = useCallback(() => {
-    navigate("/NewCity");
+    if(localStorage.getItem("UserSID")){
+      navigate("/NewCity");
+    }else{
+      setOpenDialog(true);
+    }
   }, []);
 
   return (
