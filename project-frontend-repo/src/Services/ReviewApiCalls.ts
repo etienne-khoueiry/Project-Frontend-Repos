@@ -3,6 +3,7 @@ import CreateReviewDTO from "../Models/CreateReviewDTO";
 
 const baseUrl = "https://localhost:7181/reviews";
 
+
 const GetReviewsByCityId = (CityId: number) => {
   var config: any = {
     method: "get",
@@ -12,6 +13,8 @@ const GetReviewsByCityId = (CityId: number) => {
 
   return axios(config);
 };
+
+
 
 const CreateReview = async (review: CreateReviewDTO): Promise<boolean> => {
   var data = JSON.stringify(review);
@@ -35,5 +38,7 @@ const CreateReview = async (review: CreateReviewDTO): Promise<boolean> => {
 
   return await result;
 };
+
+
 
 export { GetReviewsByCityId, CreateReview };

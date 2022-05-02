@@ -1,9 +1,3 @@
-import React, {
-  useContext,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import Button from "@mui/material/Button";
@@ -20,24 +14,42 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
+import React, {
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 const pages = ["Favorites"];
 var settings = ["Login"];
 
-const useStyles = createStyles({
-  signinBtn: {
-    backgroundColor: "#F9D342",
-  },
-});
-
 const Navbar = () => {
-
   const navigate = useNavigate();
+
   const settingRef = useRef<any>();
   const pagesRef = useRef<any>();
-  var { openDialog: openModal, setOpenDialog: setOpenModal, isValid, setIsValid, setName } = useContext(Context);
+
+  var { openDialog, setOpenDialog, isValid, setIsValid, setName } =
+    useContext(Context);
 
   const [avatarNaming, setAvatarNaming] = useState<string | null>();
+
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
+
+  const handleOpenNavMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  }, []);
+  const handleOpenUserMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  }, []);
 
   useLayoutEffect(() => {
     var firstLetterFirstName = String(
@@ -64,38 +76,20 @@ const Navbar = () => {
     localStorage.getItem("UserLastName"),
   ]);
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    if(pagesRef.current.innerText.toUpperCase() === "FAVORITES"){
-      if(localStorage.getItem("UserSID")){
-        navigate(`/Favorites/${localStorage.getItem("UserSID")}`)
-      }else{
-        setOpenModal(true);
+  const handleCloseNavMenu = useCallback(() => {
+    if (pagesRef.current.innerText.toUpperCase() === "FAVORITES") {
+      if (localStorage.getItem("UserSID")) {
+        navigate(`/Favorites/${localStorage.getItem("UserSID")}`);
+      } else {
+        setOpenDialog(true);
       }
     }
     setAnchorElNav(null);
-  };
+  }, [pagesRef.current]);
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = useCallback(() => {
     setAnchorElUser(null);
-  };
-
-  const handleSigninModal = () => {
-    setOpenModal(!openModal);
-  };
+  }, []);
 
   const handleSettings = () => {
     if (settingRef.current.innerHTML === "Logout") {
@@ -104,19 +98,18 @@ const Navbar = () => {
       setName("null");
       navigate("/");
     } else if (settingRef.current.innerHTML === "Login") {
-      setOpenModal(!openModal);
+      setOpenDialog(!openDialog);
     }
   };
 
-  const handleLogo = () => {
+  const handleLogo = useCallback(() => {
     navigate("/");
-  }
-
-
+  }, []);
 
   return (
     <div>
       <SignInUpLayout />
+
       <AppBar position="fixed">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -124,7 +117,12 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex" }, cursor: "pointer", justifyContent: "flex-start" }}
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                cursor: "pointer",
+                justifyContent: "flex-start",
+              }}
               onClick={handleLogo}
             >
               City Reviewing
@@ -161,7 +159,9 @@ const Navbar = () => {
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center" ref={pagesRef}>{page}</Typography>
+                    <Typography textAlign="center" ref={pagesRef}>
+                      {page}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -170,7 +170,11 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" }, cursor: "pointer" }}
+              sx={{
+                flexGrow: 1,
+                display: { xs: "flex", md: "none" },
+                cursor: "pointer",
+              }}
               onClick={handleLogo}
             >
               City Reviews
@@ -187,16 +191,7 @@ const Navbar = () => {
                 </Button>
               ))}
             </Box>
-            {/* {!isValid && (
-              <Box sx={{ flexGrow: 0, mx: 2 }}>
-                <Button
-                  sx={{ backgroundColor: "#F9D342", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
-                  onClick={handleSigninModal}
-                >
-                  Sign In
-                </Button>
-              </Box>
-            )} */}
+
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

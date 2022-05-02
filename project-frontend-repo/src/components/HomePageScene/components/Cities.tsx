@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Box, Grid, Stack, Typography } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
-import City from "../../../Models/City";
 import CityPost from "./CityPost";
+import { useParams } from "react-router";
+import CityDTO from "../../../Models/CityDTO";
+import React, { useEffect, useState } from "react";
+import { Box, Grid, Typography } from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
 import CityPostSkeleton from "./Skeletons/CityPostSkeleton";
 import { GetCities, GetCitiesByName } from "../../../Services/CitiesApiCalls";
-import CityDTO from "../../../Models/CityDTO";
-import { useParams } from "react-router";
 import { GetFavoritesByUserId } from "../../../Services/FavoritesApiCall";
 
-type Props = {};
 
 const Skeletons = ["", "", "", "", "", "", "", ""];
 
@@ -40,7 +38,7 @@ export function NoResultsFound() {
   );
 }
 
-export default function Cities({}: Props) {
+export default function Cities() {
   const classes = useStyles();
 
   const { id, search } = useParams();

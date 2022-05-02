@@ -12,19 +12,25 @@ import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportat
 import City from "../../../Models/City";
 
 export interface IProps {
-    city: City;
+  city: City;
 }
 
-
 export default function RatingList(props: IProps) {
-  const avatarRatingEnvironmentColor = RatingAvatarColor(props.city.generalRatingEnvorinment);
-  const avatarRatingHealthColor = RatingAvatarColor(props.city.generalRatingHealth);
-  const avatarRatingSecurityColor = RatingAvatarColor(props.city.generalRatingSecurity);
-  const avatarRatingTransportationColor = RatingAvatarColor(props.city.generalRatingTransportation);
+  const avatarRatingEnvironmentColor = RatingAvatarColor(
+    props.city.generalRatingEnvorinment
+  );
+  const avatarRatingHealthColor = RatingAvatarColor(
+    props.city.generalRatingHealth
+  );
+  const avatarRatingSecurityColor = RatingAvatarColor(
+    props.city.generalRatingSecurity
+  );
+  const avatarRatingTransportationColor = RatingAvatarColor(
+    props.city.generalRatingTransportation
+  );
 
   return (
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-
       <ListItem>
         <ListItemAvatar>
           <Avatar>
@@ -47,7 +53,10 @@ export default function RatingList(props: IProps) {
         </ListItemAvatar>
         <ListItemText primary="Environment" secondary="Rating" />
         <ListItemAvatar>
-          <Avatar sx={{ bgcolor: avatarRatingEnvironmentColor }} variant="square">
+          <Avatar
+            sx={{ bgcolor: avatarRatingEnvironmentColor }}
+            variant="square"
+          >
             {props.city.generalRatingEnvorinment}
           </Avatar>
         </ListItemAvatar>
@@ -75,12 +84,14 @@ export default function RatingList(props: IProps) {
         </ListItemAvatar>
         <ListItemText primary="Transportations" secondary="Rating" />
         <ListItemAvatar>
-          <Avatar sx={{ bgcolor: avatarRatingTransportationColor }} variant="square">
+          <Avatar
+            sx={{ bgcolor: avatarRatingTransportationColor }}
+            variant="square"
+          >
             {props.city.generalRatingTransportation}
           </Avatar>
         </ListItemAvatar>
       </ListItem>
-
     </List>
   );
 }

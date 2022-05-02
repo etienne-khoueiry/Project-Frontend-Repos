@@ -10,36 +10,28 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
-import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
+import { styled } from "@mui/styles";
+import { useNavigate } from "react-router";
+import Country from "../../../Models/Country";
+import CreateCityDTO from "../../../Models/CreateCityDTO";
+import { CreateCity } from "../../../Services/CitiesApiCalls";
+import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
+import { GetAllCountries } from "../../../Services/CountryApiCalls";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
+import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
-import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
-import { styled } from "@mui/styles";
-import { GetAllCountries } from "../../../Services/CountryApiCalls";
-import { Context } from "../../../Contexts/Context";
-import Country from "../../../Models/Country";
-import { CreateCity } from "../../../Services/CitiesApiCalls";
-import CreateCityDTO from "../../../Models/CreateCityDTO";
-import { useNavigate } from "react-router";
 
-type Props = {};
 const Input = styled("input")({
   display: "none",
 });
 
-export default function ({}: Props) {
+export default function () {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countries, setCountries] = useState<Country[]>([]);
-  const[isValid, setIsValid] = useState<boolean>(true);
+  const [isValid, setIsValid] = useState<boolean>(true);
 
   const initialValues = {
     CityName: "",
@@ -74,7 +66,7 @@ export default function ({}: Props) {
   const handleSubmit = useCallback(
     async (event: any) => {
       event.preventDefault();
-
+      
       if (
         CityName == "" ||
         CountryId == "" ||
@@ -85,7 +77,11 @@ export default function ({}: Props) {
         CityImage == ""
       ) {
         setIsValid(false);
+        
       } else {
+
+      setIsLoading(true);
+
         var generalRating =
           (Number(RatingEnvironment) +
             Number(RatingHealth) +
@@ -97,14 +93,16 @@ export default function ({}: Props) {
 
         var city: CreateCityDTO = {
           cityName: CityName,
-          cityImage: imageName[2],
+          cityImage: imageName[imageName.length-1],
           countrySID: Number(CountryId),
-          generalRating: generalRating,
+          generalRating: Number(generalRating.toFixed(1)),
           ratingEnvironment: Number(RatingEnvironment),
           ratingHealth: Number(RatingHealth),
           ratingSecurity: Number(RatingSecurity),
           ratingTransportation: Number(RatingTransportation),
         };
+
+        // console.log(city);
 
         var result = await CreateCity(city);
 
@@ -113,7 +111,15 @@ export default function ({}: Props) {
         }
       }
     },
-    [inputValues]
+    [
+      CityName,
+      CountryId,
+      RatingEnvironment,
+      RatingHealth,
+      RatingSecurity,
+      RatingTransportation,
+      CityImage,
+    ]
   );
 
   useEffect(() => {
@@ -134,7 +140,6 @@ export default function ({}: Props) {
       {!isLoading && (
         <Box component="form" noValidate sx={{ mt: 3 }}>
           <Grid container spacing={2} alignItems="center">
-
             <Grid item xs={12}>
               <TextField
                 autoComplete="given-name"
@@ -242,7 +247,7 @@ export default function ({}: Props) {
                 Environment
               </Box>
             </Grid>
-            
+
             <Grid item xs={7} md={3}>
               <TextField
                 id="outlined-number"
@@ -317,9 +322,7 @@ export default function ({}: Props) {
           >
             Create New City
           </Button>
-
         </Box>
-        
       )}
     </div>
   );

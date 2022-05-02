@@ -1,9 +1,7 @@
 import React from 'react'
 import CreateNewCityThreadScene from '../../components/CreateNewCityThreadScene/CreateNewCityThreadScene'
 
-type Props = {}
-
-export default function CreateNewCityThreadLayout({}: Props) {
+export default function CreateNewCityThreadLayout() {
   return (
     <div style={{marginTop: "50px"}}>
         <CreateNewCityThreadScene />

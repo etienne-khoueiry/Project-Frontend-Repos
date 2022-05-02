@@ -1,8 +1,8 @@
-import React from "react";
 import "./App.css";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import ContextProvider from "./Contexts/Context";
+import React from "react";
 import Routers from "./Routes/Routers";
+import ContextProvider from "./Contexts/Context";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 function App() {
   const theme = createTheme({

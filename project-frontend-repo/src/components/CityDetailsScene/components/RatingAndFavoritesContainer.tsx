@@ -1,5 +1,3 @@
-import { Avatar, Box, Grid, IconButton, Tooltip } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import React, {
   useCallback,
   useContext,
@@ -7,13 +5,15 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
-import { Context } from "../../../Contexts/Context";
+import { useParams } from "react-router";
 import {
   AddToFavorites,
   DeleteFromFavorites,
 } from "../../../Services/FavoritesApiCall";
-import { useParams } from "react-router";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Context } from "../../../Contexts/Context";
+import { Avatar, Box, Grid, IconButton, Tooltip } from "@mui/material";
+import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
 
 export interface IProps {
   generalRating: number;

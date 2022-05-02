@@ -1,17 +1,27 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import User from "../../../../../Models/User";
-import { CreateUser } from "../../../../../Services/UserApiCalls";
+import TextField from "@mui/material/TextField";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
 import { Context } from "../../../../../Contexts/Context";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import {
+  CreateUser,
+  GetUserByEmail,
+} from "../../../../../Services/UserApiCalls";
 import { storingUserData } from "../../../../../Common/Utilities/StoringData";
+import { Alert } from "@mui/material";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
@@ -39,55 +49,71 @@ export default function SignUp(props: IProps) {
     setName,
   } = useContext(Context);
 
-
   useEffect(() => {
     setIsFirstTime(true);
     setIsEmailExist(false);
   }, []);
 
+  const handleSubmit = useCallback(
+    async (event: any) => {
+      event.preventDefault();
+      props.onLoadingHandler(true);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-    props.onLoadingHandler(true);
+      var user: User = {
+        userUsername: usernameRef.current.value,
+        userLastName: lastNameRef.current.value,
+        userFirstName: firstNameRef.current.value,
+        userEmail: emailRef.current.value,
+        userPassword: passwordRef.current.value,
+      };
 
-    var user: User = {
-      userUsername: usernameRef.current.value,
-      userLastName: lastNameRef.current.value,
-      userFirstName: firstNameRef.current.value,
-      userEmail: emailRef.current.value,
-      userPassword: passwordRef.current.value,
-    };
-
-    if (
-      user.userEmail === "" ||
-      user.userFirstName === "" ||
-      user.userLastName === "" ||
-      user.userPassword === "" ||
-      user.userUsername === "" ||
-      !user.userEmail.includes("@") ||
-      containsNumber(user.userFirstName) ||
-      containsNumber(user.userLastName)
-    ) {
-      setIsValid(false);
-      setIsFirstTime(false);
-    } else {
-      var result = await CreateUser(user);
-
-      if (result) {
-        props.onLoadingHandler(false);
-        setIsValid(true);
-        setOpenModal(false);
-        setSnackbarInfo({ message: "Login Succesful!", open: true });
-        storingUserData(user);
-        setName(user.userFirstName + " " + user.userLastName);
-      } else {
-        props.onLoadingHandler(false);
+      if (
+        user.userEmail === "" ||
+        user.userFirstName === "" ||
+        user.userLastName === "" ||
+        user.userPassword === "" ||
+        user.userUsername === "" ||
+        !user.userEmail.includes("@") ||
+        containsNumber(user.userFirstName) ||
+        containsNumber(user.userLastName)
+      ) {
         setIsValid(false);
         setIsFirstTime(false);
-        setIsEmailExist(true);
+      } else {
+        var checkIsEmailExists = await GetUserByEmail(user.userEmail);
+
+        if (!checkIsEmailExists) {
+          var result = await CreateUser(user);
+
+          if (result != 0) {
+            props.onLoadingHandler(false);
+            setIsValid(true);
+            setOpenModal(false);
+            setSnackbarInfo({ message: "Login Succesful!", open: true });
+            user.usersSID = Number(result);
+            storingUserData(user);
+            setName(user.userFirstName + " " + user.userLastName);
+          } else {
+            props.onLoadingHandler(false);
+            setIsValid(false);
+            setIsFirstTime(false);
+          }
+        } else {
+          props.onLoadingHandler(false);
+          setIsValid(false);
+          setIsFirstTime(false);
+          setIsEmailExist(true);
+        }
       }
-    }
-  };
+    },
+    [
+      usernameRef.current,
+      firstNameRef.current,
+      lastNameRef.current,
+      emailRef.current,
+      passwordRef.current,
+    ]
+  );
 
   return (
     <div>
@@ -113,6 +139,11 @@ export default function SignUp(props: IProps) {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
+              {isEmailExist && (
+                <Grid item xs={12}>
+                  <Alert severity="error">Email already exists!</Alert>
+                </Grid>
+              )}
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
@@ -170,7 +201,11 @@ export default function SignUp(props: IProps) {
                   inputRef={emailRef}
                   error={isValid === false && !isFirstTime}
                   helperText={
-                    isValid === false && !isFirstTime ? "Required!" : isEmailExist? "Email Already Exists!" : " "
+                    isValid === false && !isFirstTime
+                      ? "Required!"
+                      : isEmailExist
+                      ? "Email Already Exists!"
+                      : " "
                   }
                 />
               </Grid>

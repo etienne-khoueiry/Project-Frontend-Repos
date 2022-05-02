@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -10,15 +10,14 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import TabsScene from "./TabsScene/TabsScene";
 
 export default function DialogContainer() {
-  const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   var { openDialog: openModal, setOpenDialog: setOpenModal } =
     React.useContext(Context);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpenModal(false);
-  };
+  }, []);
 
   return (
     <div>
@@ -26,13 +25,12 @@ export default function DialogContainer() {
         fullScreen={fullScreen}
         open={openModal}
         aria-labelledby="responsive-dialog-title"
-        
       >
         <Box sx={{ backgroundColor: "#eeeeee" }}>
           <DialogTitle id="responsive-dialog-title">
             {"Please Login to continue!"}
           </DialogTitle>
-          <DialogContent sx={{height: "100%"}}>
+          <DialogContent sx={{ height: "100%" }}>
             <Box sx={{ position: "absolute", right: "5px", top: "5px" }}>
               <CloseRoundedIcon
                 onClick={handleClose}

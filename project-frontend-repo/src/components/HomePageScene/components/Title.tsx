@@ -1,11 +1,9 @@
-import { Fab, Grid, Typography } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
-import React, { useCallback, useContext } from "react";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useNavigate } from "react-router";
 import { Context } from "../../../Contexts/Context";
-
-type Props = {};
+import { Fab, Grid, Typography } from "@mui/material";
+import React, { useCallback, useContext } from "react";
+import { createStyles, makeStyles } from "@mui/styles";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 const useStyles = makeStyles(
   createStyles({
@@ -15,26 +13,25 @@ const useStyles = makeStyles(
       justifyContent: "space-between",
       alignItems: "center",
     },
-    button : {
-      "&:hover" : {
+    button: {
+      "&:hover": {
         backgroundColor: "rgb(249, 211, 66)",
-      }
-    }
+      },
+    },
   })
 );
 
-export default function Title({}: Props) {
+export default function Title() {
   const classes = useStyles();
 
   const navigate = useNavigate();
 
-
-  const {setOpenDialog} = useContext(Context);
+  const { setOpenDialog } = useContext(Context);
 
   const handleNewCity = useCallback(() => {
-    if(localStorage.getItem("UserSID")){
+    if (localStorage.getItem("UserSID")) {
       navigate("/NewCity");
-    }else{
+    } else {
       setOpenDialog(true);
     }
   }, []);
@@ -53,10 +50,21 @@ export default function Title({}: Props) {
             Some cities
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={6} xl={6} sx={{display:"flex", justifyContent: "flex-end"}}>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={6}
+          lg={6}
+          xl={6}
+          sx={{ display: "flex", justifyContent: "flex-end" }}
+        >
           <Fab
             variant="extended"
-            sx={{ backgroundColor: "secondary.main", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
+            sx={{
+              backgroundColor: "secondary.main",
+              "&:hover": { backgroundColor: "rgb(249 211 66 / 60%)" },
+            }}
             className={classes.button}
             onClick={handleNewCity}
           >

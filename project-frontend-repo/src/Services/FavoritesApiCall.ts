@@ -47,7 +47,6 @@ const GetFavoritesByUserId = async (UserId: number) => {
   };
 
   return await axios(config);
-
 };
 
 export { AddToFavorites, DeleteFromFavorites, GetFavoritesByUserId };

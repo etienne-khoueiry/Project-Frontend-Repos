@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
@@ -137,9 +137,6 @@ export const RatingList = (props: IProps) => {
 export default function ReviewCard(props: IProps) {
   const { review } = props;
   const user = review.user;
-
-
-    
 
   return (
     <Card>

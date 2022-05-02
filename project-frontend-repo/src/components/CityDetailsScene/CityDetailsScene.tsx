@@ -1,6 +1,12 @@
 import AddCommentRoundedIcon from "@mui/icons-material/AddCommentRounded";
 import { Backdrop, Box, CircularProgress, Fab, Grid } from "@mui/material";
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "react-router";
 import { Context } from "../../Contexts/Context";
 import { ReviewDTO } from "../../Models/ReviewDTO";
@@ -27,68 +33,60 @@ export default function CityDetailsScene() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [addNewReview, setAddNewReview] = useState<boolean>(false);
 
-
-  
-  
   useLayoutEffect(() => {
     var res: any = "";
     var userId = Number(localStorage.getItem("UserSID")) ?? 0;
     const getCityById = async (id: number) => {
       GetCityById(id, userId)
-      .then(async function (response: any) {
-        res = await response.data;
-        setCity(res);
-        reviews.current = res.reviews;
-        setIsLoading(false);
-      })
-      .catch(function (error) {
-        res = error;
-      });
+        .then(async function (response: any) {
+          res = await response.data;
+          setCity(res);
+          reviews.current = res.reviews;
+          setIsLoading(false);
+        })
+        .catch(function (error) {
+          res = error;
+        });
     };
-    
+
     getCityById(Number(id));
   }, []);
-  
-  const NewReviewHandler = useCallback((newReview: any) => {
-    setIsLoading(true);
-    reviews.current = [...reviews.current, newReview];
-    setAddNewReview(false);
-    setIsLoading(false);
-  }, []);
-  
+
+  const NewReviewHandler = useCallback(
+    (newReview: any) => {
+      setIsLoading(true);
+      reviews.current = [...reviews.current, newReview];
+      setAddNewReview(false);
+      setIsLoading(false);
+    },
+    [reviews.current]
+  );
 
   const newReview = (
-
     <Grid container style={{ margin: 5 }}>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
       <Grid item lg={8} md={10} xs={10} sm={10}>
-        <NewReview CitySID={Number(id)} NewReviewHandler={NewReviewHandler}/>
+        <NewReview CitySID={Number(id)} NewReviewHandler={NewReviewHandler} />
       </Grid>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
     </Grid>
-    
   );
 
   const handleNewReview = useCallback(() => {
-
     if (!localStorage.getItem("UserSID")) {
       setOpenDialog(true);
     } else {
       setAddNewReview(true);
     }
-
-  }, []);
+  }, [localStorage.getItem("UserSID")]);
 
   if (isLoading) {
-
     return (
       <Backdrop sx={{ color: "#fff", zIndex: 10000 }} open={isLoading}>
         <CircularProgress color="secondary" />
       </Backdrop>
     );
-
   } else {
-
     return (
       <Box>
         <Grid
@@ -126,7 +124,8 @@ export default function CityDetailsScene() {
               </Grid>
               <Grid item xs={4} sm={4} md={4} lg={3} xl={3}>
                 <RatingAndFavoritesContainer
-                  generalRating={city?.city.generalRating} isFavorites={city.isFavorites}
+                  generalRating={city?.city.generalRating}
+                  isFavorites={city.isFavorites}
                 />
               </Grid>
             </Grid>
@@ -137,7 +136,10 @@ export default function CityDetailsScene() {
           <Grid item lg={8} md={10} xs={10} sm={10}>
             <Fab
               variant="extended"
-              sx={{ backgroundColor: "secondary.main", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
+              sx={{
+                backgroundColor: "secondary.main",
+                "&:hover": { backgroundColor: "rgb(249 211 66 / 60%)" },
+              }}
               onClick={handleNewReview}
             >
               <AddCommentRoundedIcon sx={{ mr: 1 }} />
@@ -159,10 +161,8 @@ export default function CityDetailsScene() {
               </Grid>
             );
           })}
-
         </Grid>
       </Box>
     );
-
   }
 }

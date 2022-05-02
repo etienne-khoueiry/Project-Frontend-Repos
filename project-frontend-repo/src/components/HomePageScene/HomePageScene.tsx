@@ -1,9 +1,9 @@
+import React from "react";
 import { Box } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import SearchLayout from "../../Layouts/SearchLayout/SearchLayout";
-import Cities from "./components/Cities";
 import Title from "./components/Title";
+import Cities from "./components/Cities";
 import WelcomeMessage from "./components/WelcomeMessage";
+import SearchLayout from "../../Layouts/SearchLayout/SearchLayout";
 
 
 export default function HomePageScene() {
@@ -16,5 +16,5 @@ export default function HomePageScene() {
       <Cities />
     </Box>
   );
-  
+
 }

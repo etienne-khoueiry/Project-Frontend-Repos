@@ -3,15 +3,19 @@ import CreateCityDTO from "../Models/CreateCityDTO";
 
 const baseUrl = "https://localhost:7181/cities";
 
+
+
 const GetCities = (): Promise<any> => {
   var config: any = {
     method: "get",
     url: baseUrl,
     headers: {},
   };
-
   return axios(config);
 };
+
+
+
 
 const GetCityById = (id: number, userId: number): Promise<any> => {
   var config: any = {
@@ -23,11 +27,15 @@ const GetCityById = (id: number, userId: number): Promise<any> => {
   return axios(config);
 };
 
+
+
+
 const CreateCity = async (city: CreateCityDTO) => {
   var data = JSON.stringify(city);
+  console.log(data);
   var config: any = {
     method: "post",
-    url: `${baseUrl}`,
+    url: `${baseUrl}/create`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -43,6 +51,9 @@ const CreateCity = async (city: CreateCityDTO) => {
     });
   return result;
 };
+
+
+
 
 const GetCitiesByName = async (CityName: any): Promise<any> => {
   var config: any = {
@@ -61,5 +72,8 @@ const GetCitiesByName = async (CityName: any): Promise<any> => {
     });
   return result;
 };
+
+
+
 
 export { GetCities, GetCityById, CreateCity, GetCitiesByName };

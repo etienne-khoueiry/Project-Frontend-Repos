@@ -1,7 +1,7 @@
-import { Grid } from "@mui/material";
 import React from "react";
-import SignIn_UpScene from "../../components/SignIn-UpScene/SignIn_UpScene";
+import { Grid } from "@mui/material";
 import SnackbarComponent from "../../Common/SnackbarComponent";
+import SignIn_UpScene from "../../components/SignIn-UpScene/SignIn_UpScene";
 
 export default function SignInUpLayout() {
   return (

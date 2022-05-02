@@ -1,11 +1,10 @@
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import React from "react";
 import CityForm from "./components/CityForm";
 import Title from "./components/Title";
 
-type Props = {};
 
-export default function CreateNewCityThreadScene({}: Props) {
+export default function CreateNewCityThreadScene() {
 
   return (
     <div style={{ marginTop: "100px" }}>
@@ -23,5 +22,5 @@ export default function CreateNewCityThreadScene({}: Props) {
       </Grid>
     </div>
   );
-  
+
 }

@@ -1,24 +1,20 @@
-import React, { useContext, useReducer, useState } from "react";
 import Card from "@mui/material/Card";
+import Avatar from "@mui/material/Avatar";
+import { useNavigate } from "react-router";
+import { red } from "@mui/material/colors";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Avatar from "@mui/material/Avatar";
-import { red } from "@mui/material/colors";
+import CreateRatingDTO from "../../../Models/CreateRating";
+import CreateReviewDTO from "../../../Models/CreateReviewDTO";
+import { CreateRating } from "../../../Services/RatingApiCalls";
+import { CreateReview } from "../../../Services/ReviewApiCalls";
+import React, { useCallback, useReducer, useState } from "react";
+import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import { Box, Button, Divider, Grid, TextField } from "@mui/material";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
-import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
-import Rating from "../../../Models/Rating";
-import CreateRatingDTO from "../../../Models/CreateRating";
-import { CreateRating } from "../../../Services/RatingApiCalls";
-import CreateReviewDTO from "../../../Models/CreateReviewDTO";
-import { CreateReview } from "../../../Services/ReviewApiCalls";
-import { Context } from "../../../Contexts/Context";
-import { Reviews } from "@mui/icons-material";
-import { ReviewDTO } from "../../../Models/ReviewDTO";
-import { useNavigate } from "react-router";
 
 export interface IProps {
   CitySID: number;
@@ -26,7 +22,7 @@ export interface IProps {
 }
 
 export default function NewReview(props: IProps) {
-  const { CitySID, NewReviewHandler} = props;
+  const { CitySID, NewReviewHandler } = props;
 
   const navigate = useNavigate();
 
@@ -53,67 +49,77 @@ export default function NewReview(props: IProps) {
     ReviewDescription,
   } = formValues;
 
-  const reducerInputChange = (event: any) => {
+  const reducerInputChange = useCallback((event: any) => {
     const { name, value } = event.target;
     dispatchFormValues({ [name]: value });
-  };
+  }, []);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-    if (
-      HealthRating === "" ||
-      EnvironmentRating === "" ||
-      SecurityRating === "" ||
-      TransportationRating === "" ||
-      ReviewDescription === ""
-    ) {
-      setIsValid(false);
-    } else {
-      setIsValid(true);
-      var generalRating =
-        (Number(HealthRating) +
-          Number(EnvironmentRating) +
-          Number(SecurityRating) +
-          Number(TransportationRating)) /
-        4;
-        console.log(generalRating);
-      var rating: CreateRatingDTO = {
-        generalRating: generalRating,
-        ratingHealth: Number(HealthRating),
-        ratingEnvironment: Number(EnvironmentRating),
-        ratingSecurity: Number(SecurityRating),
-        ratingTransportation: Number(TransportationRating),
-      };
+  const handleSubmit = useCallback(
+    async (event: any) => {
+      event.preventDefault();
+      if (
+        HealthRating === "" ||
+        EnvironmentRating === "" ||
+        SecurityRating === "" ||
+        TransportationRating === "" ||
+        ReviewDescription === ""
+      ) {
+        setIsValid(false);
+      } else {
+        setIsValid(true);
+        var generalRating =
+          (Number(HealthRating) +
+            Number(EnvironmentRating) +
+            Number(SecurityRating) +
+            Number(TransportationRating)) /
+          4;
 
-      var ratingSID = await CreateRating(rating);
+        var rating: CreateRatingDTO = {
+          generalRating: generalRating,
+          ratingHealth: Number(HealthRating),
+          ratingEnvironment: Number(EnvironmentRating),
+          ratingSecurity: Number(SecurityRating),
+          ratingTransportation: Number(TransportationRating),
+        };
 
-      var review: CreateReviewDTO = {
-        reviewDescription: ReviewDescription,
-        reviewDate: new Date(),
-        ratingSID: ratingSID,
-        userSID: Number(localStorage.getItem("UserSID")),
-        reviewDislikes: 0,
-        reviewLikes: 0,
-        citySID: CitySID,
-      };
+        var ratingSID = await CreateRating(rating);
 
-      var result = await CreateReview(review);
-      if (result) {
-        review.reviewDate = review.reviewDate.toLocaleString();
-        var newReview = {
-          rating: rating,
-          review: review,
-          user : {
-            usersSID: localStorage.getItem("UserSID"),
-            userFirstName: localStorage.getItem("UserFirstName"),
-            userLastName: localStorage.getItem("UserLastName"),
-            userEmail: localStorage.getItem("UserEmail")
-          }
+        var review: CreateReviewDTO = {
+          reviewDescription: ReviewDescription,
+          reviewDate: new Date(),
+          ratingSID: ratingSID,
+          userSID: Number(localStorage.getItem("UserSID")),
+          reviewDislikes: 0,
+          reviewLikes: 0,
+          citySID: CitySID,
+        };
+
+        var result = await CreateReview(review);
+
+        if (result) {
+          review.reviewDate = review.reviewDate.toLocaleString();
+          var newReview = {
+            rating: rating,
+            review: review,
+            user: {
+              usersSID: localStorage.getItem("UserSID"),
+              userFirstName: localStorage.getItem("UserFirstName"),
+              userLastName: localStorage.getItem("UserLastName"),
+              userEmail: localStorage.getItem("UserEmail"),
+            },
+          };
+          NewReviewHandler(newReview);
         }
-        NewReviewHandler(newReview);
       }
-    }
-  };
+    },
+    [
+      HealthRating,
+      EnvironmentRating,
+      SecurityRating,
+      TransportationRating,
+      ReviewDescription,
+    ]
+  );
 
   return (
     <div>

@@ -1,18 +1,14 @@
-import Snackbar from '@mui/material/Snackbar';
+import Snackbar from "@mui/material/Snackbar";
 import { Context } from "../Contexts/Context";
-import React, { useContext, useState } from "react";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
-
-
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import React, { useCallback, useContext, useState } from "react";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
-  ref,
+  ref
 ) {
   return <MuiAlert elevation={10} ref={ref} variant="filled" {...props} />;
 });
-
-
 
 type Props = {};
 
@@ -26,13 +22,23 @@ export default function SnackbarComponent({}: Props) {
 
   const { vertical, horizontal } = state;
 
-  const handleClose = () => {
-    setSnackbarInfo({...snackbarInfo, open: false});
-  };
+  const handleClose = useCallback(() => {
+    setSnackbarInfo({ ...snackbarInfo, open: false });
+  }, [snackbarInfo]);
+
   return (
     <div>
-      <Snackbar anchorOrigin={{vertical, horizontal}} open={snackbarInfo.open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ my:"50px", width: '100%' }}>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={snackbarInfo.open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          sx={{ my: "50px", width: "100%" }}
+        >
           {snackbarInfo.message}
         </Alert>
       </Snackbar>

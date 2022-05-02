@@ -1,13 +1,12 @@
-import React, { useContext, useState } from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import React, { useContext, useState } from "react";
 import { Context } from "../../../Contexts/Context";
 
 export default function WelcomeMessage() {
-
-  const {name} = useContext(Context);
+  const { name } = useContext(Context);
   return (
     <Paper
       sx={{
@@ -58,7 +57,7 @@ export default function WelcomeMessage() {
               color="inherit"
               gutterBottom
             >
-              {!name.includes("null") && "Welcome " +name +"!"}
+              {!name.includes("null") && "Welcome " + name + "!"}
               {name.includes("null") && "Welcome!"}
             </Typography>
           </Box>

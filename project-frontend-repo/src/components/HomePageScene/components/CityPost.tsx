@@ -1,46 +1,24 @@
-import React from "react";
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
+import { useNavigate } from "react-router";
+import React, { useCallback } from "react";
+import CityDTO from "../../../Models/CityDTO";
+import CardMedia from "@mui/material/CardMedia";
+import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
-import { Badge, Box, Button, Stack, Tooltip } from "@mui/material";
 import ReactCountryFlag from "react-country-flag";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import { Badge, Box, Button, Stack, Tooltip } from "@mui/material";
+import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
 import { RatingAvatarColor } from "../../../Common/Utilities/RatingAvatarColor";
-import { makeStyles, createStyles } from "@mui/styles";
-import { useNavigate } from "react-router";
-import CityDTO from "../../../Models/CityDTO";
 
 export interface IProps {
   City: CityDTO;
 }
 
-// const useStyles = makeStyles(() =>
-//   createStyles({
-//     searchbar: {
-//       backgroundColor: "black",
-//       color: "white",
-//     },
-//   })
-// );
-
-const useStyles = makeStyles(
-  createStyles({
-    searchbar: {
-      backgroundColor: "black",
-      color: "white",
-    },
-  })
-);
-
 export default function CityPost(props: IProps) {
-  const classes = useStyles();
-
   const navigate = useNavigate();
   const { City } = props;
 
@@ -48,9 +26,9 @@ export default function CityPost(props: IProps) {
     City.city.generalRating
   );
 
-  const handleCityDetails = () => {
+  const handleCityDetails = useCallback(() => {
     navigate(`/City/${City.city.citySID}`);
-  };
+  }, []);
 
   return (
     <Card>
@@ -80,7 +58,7 @@ export default function CityPost(props: IProps) {
           </Avatar>
         </Stack>
       </CardContent>
-      <CardActions sx={{justifyContent: "space-between"}}>
+      <CardActions sx={{ justifyContent: "space-between" }}>
         <IconButton aria-label="share">
           <Tooltip title="Reviews">
             <Badge color="secondary" badgeContent={City.city.reviewNumber}>
@@ -89,12 +67,15 @@ export default function CityPost(props: IProps) {
           </Tooltip>
         </IconButton>
         <Box
-        display={"flex"}
+          display={"flex"}
           justifyContent={"flex-end"}
           alignContent={"flex-end"}
         >
           <Button
-            sx={{ backgroundColor: "secondary.main", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
+            sx={{
+              backgroundColor: "secondary.main",
+              "&:hover": { backgroundColor: "rgb(249 211 66 / 60%)" },
+            }}
             onClick={handleCityDetails}
           >
             More Details

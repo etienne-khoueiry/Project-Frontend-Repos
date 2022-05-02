@@ -1,9 +1,9 @@
-import React, { useCallback, useRef, useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
+import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
+import { styled, alpha } from "@mui/material/styles";
+import React, { useCallback, useRef, useState } from "react";
 
 const SearchScene = () => {
   const searchRef = useRef<any>("");
