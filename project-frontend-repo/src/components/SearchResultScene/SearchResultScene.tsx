@@ -7,7 +7,6 @@ type Props = {};
 
 export default function SearchResultScene({}: Props) {
   const { search } = useParams();
-//   const[isLoading, setIsLoading] = useState<boolean>(true);
 
   return (
     <div style={{marginTop:"70px"}}>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -27,6 +27,7 @@ export default function SignUp(props: IProps) {
   const usernameRef = useRef<any>();
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
+  const [isEmailExist, setIsEmailExist] = useState<boolean>(false);
 
   const {
     setOpenDialog: setOpenModal,
@@ -38,9 +39,13 @@ export default function SignUp(props: IProps) {
     setName,
   } = useContext(Context);
 
+
   useEffect(() => {
     setIsFirstTime(true);
+    setIsEmailExist(false);
   }, []);
+
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     props.onLoadingHandler(true);
@@ -54,11 +59,11 @@ export default function SignUp(props: IProps) {
     };
 
     if (
-      user.userEmail == "" ||
-      user.userFirstName == "" ||
-      user.userLastName == "" ||
-      user.userPassword == "" ||
-      user.userUsername == "" ||
+      user.userEmail === "" ||
+      user.userFirstName === "" ||
+      user.userLastName === "" ||
+      user.userPassword === "" ||
+      user.userUsername === "" ||
       !user.userEmail.includes("@") ||
       containsNumber(user.userFirstName) ||
       containsNumber(user.userLastName)
@@ -79,6 +84,7 @@ export default function SignUp(props: IProps) {
         props.onLoadingHandler(false);
         setIsValid(false);
         setIsFirstTime(false);
+        setIsEmailExist(true);
       }
     }
   };
@@ -117,9 +123,9 @@ export default function SignUp(props: IProps) {
                   label="First Name"
                   autoFocus
                   inputRef={firstNameRef}
-                  error={isValid == false && !isFirstTime}
+                  error={isValid === false && !isFirstTime}
                   helperText={
-                    isValid == false && !isFirstTime ? "Required!" : " "
+                    isValid === false && !isFirstTime ? "Required!" : " "
                   }
                 />
               </Grid>
@@ -132,9 +138,9 @@ export default function SignUp(props: IProps) {
                   name="lastName"
                   autoComplete="family-name"
                   inputRef={lastNameRef}
-                  error={isValid == false && !isFirstTime}
+                  error={isValid === false && !isFirstTime}
                   helperText={
-                    isValid == false && !isFirstTime ? "Required!" : " "
+                    isValid === false && !isFirstTime ? "Required!" : " "
                   }
                 />
               </Grid>
@@ -147,9 +153,9 @@ export default function SignUp(props: IProps) {
                   name="username"
                   autoComplete="username"
                   inputRef={usernameRef}
-                  error={isValid == false && !isFirstTime}
+                  error={isValid === false && !isFirstTime}
                   helperText={
-                    isValid == false && !isFirstTime ? "Required!" : " "
+                    isValid === false && !isFirstTime ? "Required!" : " "
                   }
                 />
               </Grid>
@@ -162,9 +168,9 @@ export default function SignUp(props: IProps) {
                   name="email"
                   autoComplete="email"
                   inputRef={emailRef}
-                  error={isValid == false && !isFirstTime}
+                  error={isValid === false && !isFirstTime}
                   helperText={
-                    isValid == false && !isFirstTime ? "Required!" : " "
+                    isValid === false && !isFirstTime ? "Required!" : isEmailExist? "Email Already Exists!" : " "
                   }
                 />
               </Grid>
@@ -178,9 +184,9 @@ export default function SignUp(props: IProps) {
                   id="password"
                   autoComplete="new-password"
                   inputRef={passwordRef}
-                  error={isValid == false && !isFirstTime}
+                  error={isValid === false && !isFirstTime}
                   helperText={
-                    isValid == false && !isFirstTime ? "Required!" : " "
+                    isValid === false && !isFirstTime ? "Required!" : " "
                   }
                 />
               </Grid>

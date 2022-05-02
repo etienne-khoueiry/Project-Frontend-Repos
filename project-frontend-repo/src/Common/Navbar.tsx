@@ -1,27 +1,25 @@
 import React, {
-  useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import { useNavigate } from "react-router";
 import Tooltip from "@mui/material/Tooltip";
+import Toolbar from "@mui/material/Toolbar";
+import { createStyles } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { Context } from "../Contexts/Context";
-import { createStyles } from "@mui/material";
+import Container from "@mui/material/Container";
+import MenuIcon from "@mui/icons-material/Menu";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
 import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
-import { useNavigate } from "react-router";
 
 const pages = ["Favorites"];
 var settings = ["Login"];
@@ -33,7 +31,6 @@ const useStyles = createStyles({
 });
 
 const Navbar = () => {
-  // const classes = useStyles();
 
   const navigate = useNavigate();
   const settingRef = useRef<any>();
@@ -60,7 +57,7 @@ const Navbar = () => {
       );
     } else {
       settings = ["Login"];
-      setAvatarNaming(null); //setting to a undefined value to show the anonymous person
+      setAvatarNaming(null);
     }
   }, [
     localStorage.getItem("UserFirstName"),

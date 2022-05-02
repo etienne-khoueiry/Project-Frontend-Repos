@@ -6,6 +6,7 @@ import Title from "./components/Title";
 type Props = {};
 
 export default function CreateNewCityThreadScene({}: Props) {
+
   return (
     <div style={{ marginTop: "100px" }}>
       <Grid container spacing={2} justifyContent="center" textAlign={"center"}>
@@ -22,4 +23,5 @@ export default function CreateNewCityThreadScene({}: Props) {
       </Grid>
     </div>
   );
+  
 }

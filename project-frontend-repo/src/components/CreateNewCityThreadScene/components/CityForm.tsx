@@ -35,24 +35,11 @@ const Input = styled("input")({
   display: "none",
 });
 
-// const MoveImage = (ImagePath: any, ImageName: any) => {
-//   var fs = require("fs");
-
-//   var oldPath = "old/path/file.txt";
-//   var newPath = "C:\\Users\\User\\source\\repos\\Project-Backend-Repos\\CitiesReviews\\Images\\" +ImageName;
-
-//   fs.rename(oldPath, newPath, function (err: any) {
-//     if (err) throw err;
-//     return newPath;
-//   });
-// };
-
 export default function ({}: Props) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countries, setCountries] = useState<Country[]>([]);
   const[isValid, setIsValid] = useState<boolean>(true);
-  // const { isValid, setIsValid } = useContext(Context);
 
   const initialValues = {
     CityName: "",
@@ -108,7 +95,6 @@ export default function ({}: Props) {
 
         var imageName = CityImage.split("\\");
 
-        // var path = MoveImage(CityImage, imageName[2]);
         var city: CreateCityDTO = {
           cityName: CityName,
           cityImage: imageName[2],
@@ -148,6 +134,7 @@ export default function ({}: Props) {
       {!isLoading && (
         <Box component="form" noValidate sx={{ mt: 3 }}>
           <Grid container spacing={2} alignItems="center">
+
             <Grid item xs={12}>
               <TextField
                 autoComplete="given-name"
@@ -162,6 +149,7 @@ export default function ({}: Props) {
                 helperText={!isValid ? "Required!" : " "}
               />
             </Grid>
+
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Country</InputLabel>
@@ -173,7 +161,6 @@ export default function ({}: Props) {
                   value={inputValues.CountryId}
                   onChange={reducerInputChange}
                   error={!isValid}
-                  // helperText={!isValid ? "Required!" : " "}
                 >
                   {countries.map((country, index) => {
                     return (
@@ -185,6 +172,7 @@ export default function ({}: Props) {
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={6}>
               <Box
                 sx={{
@@ -198,6 +186,7 @@ export default function ({}: Props) {
                 Upload Image
               </Box>
             </Grid>
+
             <Grid item xs={6}>
               <label htmlFor="contained-button-file">
                 <Input
@@ -207,14 +196,13 @@ export default function ({}: Props) {
                   type="file"
                   name="CityImage"
                   onChange={reducerInputChange}
-                  // error={!isValid}
-                  // helperText={!isValid ? "Required!" : " "}
                 />
                 <Button variant="contained" component="span">
                   Upload
                 </Button>
               </label>
             </Grid>
+
             <Grid item xs={5} md={3}>
               <Box
                 sx={{
@@ -228,6 +216,7 @@ export default function ({}: Props) {
                 Health
               </Box>
             </Grid>
+
             <Grid item xs={7} md={3}>
               <TextField
                 id="outlined-number"
@@ -239,6 +228,7 @@ export default function ({}: Props) {
                 helperText={!isValid ? "Required!" : " "}
               />
             </Grid>
+
             <Grid item xs={5} md={3}>
               <Box
                 sx={{
@@ -252,6 +242,7 @@ export default function ({}: Props) {
                 Environment
               </Box>
             </Grid>
+            
             <Grid item xs={7} md={3}>
               <TextField
                 id="outlined-number"
@@ -263,6 +254,7 @@ export default function ({}: Props) {
                 helperText={!isValid ? "Required!" : " "}
               />
             </Grid>
+
             <Grid item xs={5} md={3}>
               <Box
                 sx={{
@@ -276,6 +268,7 @@ export default function ({}: Props) {
                 Security
               </Box>
             </Grid>
+
             <Grid item xs={7} md={3}>
               <TextField
                 id="outlined-number"
@@ -287,6 +280,7 @@ export default function ({}: Props) {
                 helperText={!isValid ? "Required!" : " "}
               />
             </Grid>
+
             <Grid item xs={5} md={3}>
               <Box
                 sx={{
@@ -300,6 +294,7 @@ export default function ({}: Props) {
                 Transportation
               </Box>
             </Grid>
+
             <Grid item xs={7} md={3}>
               <TextField
                 id="outlined-number"
@@ -312,6 +307,7 @@ export default function ({}: Props) {
               />
             </Grid>
           </Grid>
+
           <Button
             type="submit"
             fullWidth
@@ -321,7 +317,9 @@ export default function ({}: Props) {
           >
             Create New City
           </Button>
+
         </Box>
+        
       )}
     </div>
   );

@@ -96,7 +96,6 @@ export default function CityPost(props: IProps) {
           <Button
             sx={{ backgroundColor: "secondary.main", "&:hover":{backgroundColor: "rgb(249 211 66 / 60%)"} }}
             onClick={handleCityDetails}
-            // className={classes.searchbar}
           >
             More Details
           </Button>

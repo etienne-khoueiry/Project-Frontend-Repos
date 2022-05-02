@@ -74,7 +74,6 @@ const SearchScene = () => {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
-        // onChange={ProductSearchHandler}
         inputRef={searchRef}
         error={emptySearch}
       />

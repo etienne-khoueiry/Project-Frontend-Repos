@@ -19,12 +19,13 @@ export interface IProps {
 export default function CityDetailsScene() {
   const { id } = useParams();
 
+  const reviews = useRef<any[]>([]);
+
   const { setOpenDialog } = useContext(Context);
 
   const [city, setCity] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [addNewReview, setAddNewReview] = useState<boolean>(false);
-  const reviews = useRef<any[]>([]);
 
 
   
@@ -37,8 +38,6 @@ export default function CityDetailsScene() {
       .then(async function (response: any) {
         res = await response.data;
         setCity(res);
-        // console.log(res);
-        // setReviews(res.reviews);
         reviews.current = res.reviews;
         setIsLoading(false);
       })
@@ -51,10 +50,7 @@ export default function CityDetailsScene() {
   }, []);
   
   const NewReviewHandler = useCallback((newReview: any) => {
-    // console.log(reviews);
-    // setReviews([...reviews, newReview]);
-        setIsLoading(true);
-        // console.log(reviews);
+    setIsLoading(true);
     reviews.current = [...reviews.current, newReview];
     setAddNewReview(false);
     setIsLoading(false);
@@ -62,6 +58,7 @@ export default function CityDetailsScene() {
   
 
   const newReview = (
+
     <Grid container style={{ margin: 5 }}>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
       <Grid item lg={8} md={10} xs={10} sm={10}>
@@ -69,23 +66,29 @@ export default function CityDetailsScene() {
       </Grid>
       <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
     </Grid>
+    
   );
 
   const handleNewReview = useCallback(() => {
+
     if (!localStorage.getItem("UserSID")) {
       setOpenDialog(true);
     } else {
       setAddNewReview(true);
     }
+
   }, []);
 
   if (isLoading) {
+
     return (
       <Backdrop sx={{ color: "#fff", zIndex: 10000 }} open={isLoading}>
         <CircularProgress color="secondary" />
       </Backdrop>
     );
+
   } else {
+
     return (
       <Box>
         <Grid
@@ -144,6 +147,7 @@ export default function CityDetailsScene() {
           <Grid item lg={2} md={1} xs={1} sm={1}></Grid>
 
           {addNewReview && newReview}
+
           {reviews.current.map((review: ReviewDTO, index: number) => {
             return (
               <Grid key={index} container style={{ margin: 5 }}>
@@ -155,8 +159,10 @@ export default function CityDetailsScene() {
               </Grid>
             );
           })}
+
         </Grid>
       </Box>
     );
+
   }
 }
