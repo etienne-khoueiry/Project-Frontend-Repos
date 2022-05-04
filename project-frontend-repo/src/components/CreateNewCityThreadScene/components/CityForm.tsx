@@ -19,7 +19,13 @@ import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import { GetAllCountries } from "../../../Services/CountryApiCalls";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
 
@@ -29,6 +35,7 @@ const Input = styled("input")({
 
 export default function () {
   const navigate = useNavigate();
+  // const imageRef = useRef<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countries, setCountries] = useState<Country[]>([]);
   const [isValid, setIsValid] = useState<boolean>(true);
@@ -59,14 +66,20 @@ export default function () {
   } = inputValues;
 
   const reducerInputChange = (event: any) => {
-    const { name, value } = event.target;
-    dispatchFormValues({ [name]: value });
+    // console.log(typeof event.target.files[0]);
+
+    if (event.target.name === "CityImage") {
+      dispatchFormValues({ [event.target.name]: event.target.files[0] });
+    } else {
+      const { name, value } = event.target;
+      dispatchFormValues({ [name]: value });
+    }
   };
 
   const handleSubmit = useCallback(
     async (event: any) => {
       event.preventDefault();
-      
+
       if (
         CityName == "" ||
         CountryId == "" ||
@@ -77,38 +90,33 @@ export default function () {
         CityImage == ""
       ) {
         setIsValid(false);
-        
       } else {
-
-      setIsLoading(true);
-
-        var generalRating =
-          (Number(RatingEnvironment) +
-            Number(RatingHealth) +
-            Number(RatingSecurity) +
-            Number(RatingTransportation)) /
-          4;
-
-        var imageName = CityImage.split("\\");
-
-        var city: CreateCityDTO = {
-          cityName: CityName,
-          cityImage: imageName[imageName.length-1],
-          countrySID: Number(CountryId),
-          generalRating: Number(generalRating.toFixed(1)),
-          ratingEnvironment: Number(RatingEnvironment),
-          ratingHealth: Number(RatingHealth),
-          ratingSecurity: Number(RatingSecurity),
-          ratingTransportation: Number(RatingTransportation),
-        };
-
-        // console.log(city);
-
-        var result = await CreateCity(city);
-
-        if (result) {
-          navigate("/");
-        }
+        // console.log(imageRef);
+        setIsLoading(true);
+          var generalRating =
+            (Number(RatingEnvironment) +
+              Number(RatingHealth) +
+              Number(RatingSecurity) +
+              Number(RatingTransportation)) /
+            4;
+          // var imageName = CityImage.split("\\");
+          var city: CreateCityDTO = {
+            cityName: CityName,
+            cityImage: CityImage,
+            countrySID: Number(CountryId),
+            generalRating: Number(generalRating.toFixed(1)),
+            ratingEnvironment: Number(RatingEnvironment),
+            ratingHealth: Number(RatingHealth),
+            ratingSecurity: Number(RatingSecurity),
+            ratingTransportation: Number(RatingTransportation),
+          };
+          // console.log(city);
+          var result = await CreateCity(city);
+          if (result) {
+            navigate("/");
+          }else{
+            setIsLoading(false);
+          }
       }
     },
     [
@@ -201,6 +209,7 @@ export default function () {
                   type="file"
                   name="CityImage"
                   onChange={reducerInputChange}
+                  // ref={imageRef}
                 />
                 <Button variant="contained" component="span">
                   Upload

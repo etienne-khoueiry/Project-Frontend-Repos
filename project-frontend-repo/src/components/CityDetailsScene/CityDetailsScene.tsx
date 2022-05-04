@@ -1,8 +1,16 @@
 import AddCommentRoundedIcon from "@mui/icons-material/AddCommentRounded";
-import { Backdrop, Box, CircularProgress, Fab, Grid } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  CircularProgress,
+  Fab,
+  Grid,
+  Pagination,
+} from "@mui/material";
 import React, {
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -11,6 +19,8 @@ import { useParams } from "react-router";
 import { Context } from "../../Contexts/Context";
 import { ReviewDTO } from "../../Models/ReviewDTO";
 import { GetCityById } from "../../Services/CitiesApiCalls";
+import { GetReviewsByCityId } from "../../Services/ReviewApiCalls";
+import PaginationComponent from "../HomePageScene/components/PaginationComponent";
 import ImageContainer from "./components/ImageContainer";
 import NamingContainer from "./components/NamingContainer";
 import NewReview from "./components/NewReview";
@@ -25,9 +35,9 @@ export interface IProps {
 export default function CityDetailsScene() {
   const { id } = useParams();
 
-  const reviews = useRef<any[]>([]);
+  // const reviews = useRef<any[]>([]);
 
-  const { setOpenDialog } = useContext(Context);
+  const { setOpenDialog, reviews } = useContext(Context);
 
   const [city, setCity] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -36,20 +46,36 @@ export default function CityDetailsScene() {
   useLayoutEffect(() => {
     var res: any = "";
     var userId = Number(localStorage.getItem("UserSID")) ?? 0;
-    const getCityById = async (id: number) => {
-      GetCityById(id, userId)
-        .then(async function (response: any) {
-          res = await response.data;
-          setCity(res);
-          reviews.current = res.reviews;
-          setIsLoading(false);
-        })
-        .catch(function (error) {
-          res = error;
-        });
-    };
 
+    const getCityById = async (id: number) => {
+      console.log("ccc");
+      // GetCityById(id, userId)
+      //   .then(async function (response: any) {
+      //     res = await response.data;
+      //     setCity(res);
+      //     reviews.current = res.reviews;
+      //     setIsLoading(false);
+      //   })
+      //   .catch(function (error) {
+      //     res = error;
+      //   });
+      var cityResult = await GetCityById(id, userId);
+      var reviewsResult = await GetReviewsByCityId(id, 1);
+      if (cityResult && reviewsResult) {
+        setCity(cityResult);
+        reviews.current = reviewsResult;
+        console.log(reviews.current);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+      console.log("dddd");
+
+    };
+    console.log("aaA");
     getCityById(Number(id));
+    console.log("bbb");
+
   }, []);
 
   const NewReviewHandler = useCallback(
@@ -161,6 +187,7 @@ export default function CityDetailsScene() {
               </Grid>
             );
           })}
+          <PaginationComponent />
         </Grid>
       </Box>
     );

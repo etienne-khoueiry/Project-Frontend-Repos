@@ -62,7 +62,7 @@ export default function CityPost(props: IProps) {
         <IconButton aria-label="share">
           <Tooltip title="Reviews">
             <Badge color="secondary" badgeContent={City.city.reviewNumber}>
-              <ReviewsRoundedIcon />
+              <ReviewsRoundedIcon onClick={handleCityDetails}/>
             </Badge>
           </Tooltip>
         </IconButton>

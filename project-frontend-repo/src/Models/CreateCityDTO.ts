@@ -1,6 +1,6 @@
 export default interface CreateCityDTO {
   cityName: string;
-  cityImage: string;
+  cityImage: any;
   countrySID: number;
   generalRating: number;
   ratingEnvironment: number;

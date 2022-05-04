@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router";
 import { Typography } from "@mui/material";
 import Cities from "../HomePageScene/components/Cities";
+import PaginationComponent from "../HomePageScene/components/PaginationComponent";
 
 export default function SearchResultScene() {
   const { search } = useParams();
@@ -16,6 +17,7 @@ export default function SearchResultScene() {
         Results for {search}
       </Typography>
       <Cities />
+      <PaginationComponent />
     </div>
   );
 }

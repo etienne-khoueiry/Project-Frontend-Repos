@@ -1,12 +1,13 @@
 import CityPost from "./CityPost";
 import { useParams } from "react-router";
 import CityDTO from "../../../Models/CityDTO";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import CityPostSkeleton from "./Skeletons/CityPostSkeleton";
 import { GetCities, GetCitiesByName } from "../../../Services/CitiesApiCalls";
 import { GetFavoritesByUserId } from "../../../Services/FavoritesApiCall";
+import { Context } from "../../../Contexts/Context";
 
 
 const Skeletons = ["", "", "", "", "", "", "", ""];
@@ -43,22 +44,20 @@ export default function Cities() {
 
   const { id, search } = useParams();
 
-  const [cities, setCities] = useState<CityDTO[]>([]);
+  const { cities, setCities } = useContext(Context);
+
+  // const [cities, setCities] = useState<CityDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     var res: any = "";
     const getCities = async () => {
       if (!id && !search) {
-        GetCities()
-          .then(async function (response) {
-            res = await response.data;
-            setCities(res);
-            setIsLoading(false);
-          })
-          .catch(function (error) {
-            res = error;
-          });
+        var result = await GetCities(1);
+        if(result){
+          setCities(result);
+          setIsLoading(false);
+        }
       } else if(id) {
         GetFavoritesByUserId(Number(id))
           .then(async function (response) {
@@ -70,7 +69,7 @@ export default function Cities() {
             res = error;
           });
       }else{
-        var cities = await GetCitiesByName(search);
+        var cities = await GetCitiesByName(search, 1);
         if(cities){
           setCities(cities);
         }
@@ -89,9 +88,9 @@ export default function Cities() {
       alignItems={"flex-start"}
       className={classes.citiesStack}
     >
-      {cities.length == 0 && !isLoading && <NoResultsFound />}
+      {!isLoading && cities.length == 0 && <NoResultsFound />}
       {!isLoading &&
-        cities.map((city, index) => (
+        cities.map((city: any, index: any) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
             <CityPost City={city} key={index} />
           </Grid>

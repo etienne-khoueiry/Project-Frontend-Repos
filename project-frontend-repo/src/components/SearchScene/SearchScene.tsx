@@ -76,6 +76,7 @@ const SearchScene = () => {
         inputProps={{ "aria-label": "search" }}
         inputRef={searchRef}
         error={emptySearch}
+        sx={{width: "75vw"}}
       />
       <Button
         sx={{

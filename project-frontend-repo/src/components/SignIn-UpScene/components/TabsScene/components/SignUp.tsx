@@ -6,9 +6,14 @@ import React, {
   useState,
 } from "react";
 import Box from "@mui/material/Box";
+import { Alert } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import {
+  CreateUser,
+  GetUserByEmail,
+} from "../../../../../Services/UserApiCalls";
 import User from "../../../../../Models/User";
 import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
@@ -16,12 +21,7 @@ import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Context } from "../../../../../Contexts/Context";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import {
-  CreateUser,
-  GetUserByEmail,
-} from "../../../../../Services/UserApiCalls";
 import { storingUserData } from "../../../../../Common/Utilities/StoringData";
-import { Alert } from "@mui/material";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
@@ -85,7 +85,7 @@ export default function SignUp(props: IProps) {
         if (!checkIsEmailExists) {
           var result = await CreateUser(user);
 
-          if (result != 0) {
+          if (result !== 0) {
             props.onLoadingHandler(false);
             setIsValid(true);
             setOpenModal(false);
