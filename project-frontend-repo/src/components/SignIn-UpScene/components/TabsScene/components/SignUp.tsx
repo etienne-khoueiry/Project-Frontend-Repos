@@ -1,25 +1,36 @@
-import React, { useContext, useRef } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import Box from "@mui/material/Box";
+import { Alert } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  CreateUser,
+  GetUserByEmail,
+  GetUserByToken,
+} from "../../../../../Services/UserApiCalls";
 import User from "../../../../../Models/User";
-import { CreateUser } from "../../../../../Services/UserApiCalls";
-import { CircularProgress } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
 import { Context } from "../../../../../Contexts/Context";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { storingUserData } from "../../../../../Common/Utilities/StoringData";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
 }
+
+const containsNumber = (str: any) => {
+  return /\d/.test(str);
+};
 
 export default function SignUp(props: IProps) {
   const firstNameRef = useRef<any>();
@@ -27,32 +38,91 @@ export default function SignUp(props: IProps) {
   const usernameRef = useRef<any>();
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
+  const [isEmailExist, setIsEmailExist] = useState<boolean>(false);
 
-  const { setOpenModal, setIsValid, setSnackbarInfo } = useContext(Context);
+  const {
+    setOpenDialog: setOpenModal,
+    isValid,
+    setIsValid,
+    isFirstTime,
+    setIsFirstTime,
+    setSnackbarInfo,
+    setName,
+    user
+  } = useContext(Context);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-    // const data = new FormData(event.currentTarget); //useRef or this?
+  useEffect(() => {
+    setIsFirstTime(true);
+    setIsEmailExist(false);
+  }, []);
 
-    var user: User = {
-      userUsername: usernameRef.current.value,
-      userLastName: lastNameRef.current.value,
-      userFirstName: firstNameRef.current.value,
-      userEmail: emailRef.current.value,
-      userPassword: passwordRef.current.value,
-    };
+  const handleSubmit = useCallback(
+    async (event: any) => {
+      event.preventDefault();
+      props.onLoadingHandler(true);
 
-    var result = await CreateUser(user);
+      var userObj: User = {
+        userUsername: usernameRef.current.value,
+        userLastName: lastNameRef.current.value,
+        userFirstName: firstNameRef.current.value,
+        userEmail: emailRef.current.value,
+        userPassword: passwordRef.current.value,
+      };
 
-    if (result) {
-      props.onLoadingHandler(false);
-      setIsValid(true);
-      setOpenModal(false);
-      setSnackbarInfo({ message: "Login Succesful!", open: true });
-    } else {
-      console.log("error");
-    }
-  };
+      if (
+        userObj.userEmail === "" ||
+        userObj.userFirstName === "" ||
+        userObj.userLastName === "" ||
+        userObj.userPassword === "" ||
+        userObj.userUsername === "" ||
+        !userObj.userEmail?.includes("@") ||
+        containsNumber(userObj.userFirstName) ||
+        containsNumber(userObj.userLastName)
+      ) {
+        setIsValid(false);
+        setIsFirstTime(false);
+      } else {
+        var checkIsEmailExists = await GetUserByEmail(userObj.userEmail);
+
+        if (!checkIsEmailExists) {
+          var result: any = await CreateUser(userObj);
+
+          if (result) {
+            localStorage.setItem("bearer", result);
+            var resultData = await GetUserByToken(result);
+            if(resultData){
+              user.current = resultData;
+              props.onLoadingHandler(false);
+              setIsValid(true);
+              setOpenModal(false);
+              setSnackbarInfo({ message: "SignUp Succesful!", open: true });
+              setName(user.current.userFirstName + " " + user.current.userLastName);
+            }else{
+              props.onLoadingHandler(false);
+              setIsValid(false);
+              setIsFirstTime(false);  
+            }
+          } else {
+            props.onLoadingHandler(false);
+            setIsValid(false);
+            setIsFirstTime(false);
+          }
+        } else {
+          props.onLoadingHandler(false);
+          setIsValid(false);
+          setIsFirstTime(false);
+          setIsEmailExist(true);
+        }
+      }
+    },
+    [
+      usernameRef.current,
+      firstNameRef.current,
+      lastNameRef.current,
+      emailRef.current,
+      passwordRef.current,
+    ]
+  );
 
   return (
     <div>
@@ -78,6 +148,11 @@ export default function SignUp(props: IProps) {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
+              {isEmailExist && (
+                <Grid item xs={12}>
+                  <Alert severity="error">Email already exists!</Alert>
+                </Grid>
+              )}
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
@@ -88,6 +163,10 @@ export default function SignUp(props: IProps) {
                   label="First Name"
                   autoFocus
                   inputRef={firstNameRef}
+                  error={isValid === false && !isFirstTime}
+                  helperText={
+                    isValid === false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -99,6 +178,10 @@ export default function SignUp(props: IProps) {
                   name="lastName"
                   autoComplete="family-name"
                   inputRef={lastNameRef}
+                  error={isValid === false && !isFirstTime}
+                  helperText={
+                    isValid === false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -110,6 +193,10 @@ export default function SignUp(props: IProps) {
                   name="username"
                   autoComplete="username"
                   inputRef={usernameRef}
+                  error={isValid === false && !isFirstTime}
+                  helperText={
+                    isValid === false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -121,6 +208,14 @@ export default function SignUp(props: IProps) {
                   name="email"
                   autoComplete="email"
                   inputRef={emailRef}
+                  error={isValid === false && !isFirstTime}
+                  helperText={
+                    isValid === false && !isFirstTime
+                      ? "Required!"
+                      : isEmailExist
+                      ? "Email Already Exists!"
+                      : " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -133,6 +228,10 @@ export default function SignUp(props: IProps) {
                   id="password"
                   autoComplete="new-password"
                   inputRef={passwordRef}
+                  error={isValid === false && !isFirstTime}
+                  helperText={
+                    isValid === false && !isFirstTime ? "Required!" : " "
+                  }
                 />
               </Grid>
             </Grid>

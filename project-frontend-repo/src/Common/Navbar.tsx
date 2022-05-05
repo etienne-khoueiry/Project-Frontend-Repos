@@ -1,54 +1,72 @@
+import Box from "@mui/material/Box";
+import Menu from "@mui/material/Menu";
+import Button from "@mui/material/Button";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import { useNavigate } from "react-router";
+import Tooltip from "@mui/material/Tooltip";
+import Toolbar from "@mui/material/Toolbar";
+import { createStyles } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import { Context } from "../Contexts/Context";
+import Container from "@mui/material/Container";
+import MenuIcon from "@mui/icons-material/Menu";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
 import React, {
   useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import { Context } from "../Contexts/Context";
-import { createStyles } from "@mui/material";
-import SignInUpLayout from "../Layouts/SignInUpLayout/SignInUpLayout";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Favorites"];
 var settings = ["Login"];
 
-const useStyles = createStyles({
-  signinBtn: {
-    backgroundColor: "#F9D342",
-  },
-});
-
 const Navbar = () => {
-  // const classes = useStyles();
+  const navigate = useNavigate();
+
   const settingRef = useRef<any>();
-  var { openModal, setOpenModal, isValid, setIsValid } = useContext(Context);
+  const pagesRef = useRef<any>();
+
+  var { openDialog, setOpenDialog, isValid, setIsValid, setName, user, name } =
+    useContext(Context);
 
   const [avatarNaming, setAvatarNaming] = useState<string | null>();
 
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
+
+  const handleOpenNavMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElNav(event.currentTarget);
+    },
+    []
+  );
+  const handleOpenUserMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElUser(event.currentTarget);
+    },
+    []
+  );
+
   useLayoutEffect(() => {
-    var firstLetterFirstName = String(
-      localStorage.getItem("UserFirstName")
-    ).substring(0, 1);
-    var firstLetterLastName = String(
-      localStorage.getItem("UserLastName")
-    ).substring(0, 1);
-    if (
-      localStorage.getItem("UserFirstName") &&
-      localStorage.getItem("UserLastName")
-    ) {
+    if (user.current.userFirstName && user.current.userLastName) {
+      var firstLetterFirstName = String(user.current.userFirstName).substring(
+        0,
+        1
+      );
+      var firstLetterLastName = String(user.current.userLastName).substring(
+        0,
+        1
+      );
       settings = ["Logout"];
       setIsValid(true);
       setAvatarNaming(
@@ -56,51 +74,48 @@ const Navbar = () => {
       );
     } else {
       settings = ["Login"];
-      setAvatarNaming(null); //setting to a undefined value to show the anonymous person
+      setAvatarNaming(null);
     }
-  }, [
-    localStorage.getItem("UserFirstName"),
-    localStorage.getItem("UserLastName"),
-  ]);
+  }, [name]);
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = useCallback(() => {
+    if (pagesRef.current.innerText.toUpperCase() === "FAVORITES") {
+      if (user.current.usersSID) {
+        navigate(`/Favorites/${user.current.usersSID}`);
+      } else {
+        setOpenDialog(true);
+      }
+    }
     setAnchorElNav(null);
-  };
+  }, [pagesRef.current]);
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = useCallback(() => {
     setAnchorElUser(null);
-  };
-
-  const handleSigninModal = () => {
-    setOpenModal(!openModal);
-  };
+  }, []);
 
   const handleSettings = () => {
     if (settingRef.current.innerHTML === "Logout") {
       localStorage.clear();
+      user.current = {};
       setIsValid(false);
+      setAvatarNaming(null);
+      settings= ["Login"]
+      setName("null");
+      navigate("/");
+      
     } else if (settingRef.current.innerHTML === "Login") {
-      setOpenModal(!openModal);
+      setOpenDialog(!openDialog);
     }
   };
+
+  const handleLogo = useCallback(() => {
+    navigate("/");
+  }, []);
 
   return (
     <div>
       <SignInUpLayout />
+
       <AppBar position="fixed">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -108,9 +123,15 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                cursor: "pointer",
+                justifyContent: "flex-start",
+              }}
+              onClick={handleLogo}
             >
-              LOGO
+              City Reviewing
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -144,7 +165,9 @@ const Navbar = () => {
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                    <Typography textAlign="center" ref={pagesRef}>
+                      {page}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -153,9 +176,14 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+              sx={{
+                flexGrow: 1,
+                display: { xs: "flex", md: "none" },
+                cursor: "pointer",
+              }}
+              onClick={handleLogo}
             >
-              LOGO
+              City Reviews
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
@@ -163,21 +191,13 @@ const Navbar = () => {
                   key={page}
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: "white", display: "block" }}
+                  ref={pagesRef}
                 >
                   {page}
                 </Button>
               ))}
             </Box>
-            {!isValid && (
-              <Box sx={{ flexGrow: 0, mx: 2 }}>
-                <Button
-                  sx={{ backgroundColor: "#F9D342" }}
-                  onClick={handleSigninModal}
-                >
-                  Sign In
-                </Button>
-              </Box>
-            )}
+
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

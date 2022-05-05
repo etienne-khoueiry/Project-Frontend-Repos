@@ -1,21 +1,25 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import {
+  GetUserByToken,
+  IsUserExists,
+} from "../../../../../Services/UserApiCalls";
 import Container from "@mui/material/Container";
-import { IsUserExists } from "../../../../../Services/UserApiCalls";
+import Typography from "@mui/material/Typography";
 import UserExists from "../../../../../Models/UserExists";
-import { useNavigate } from "react-router";
 import { Context } from "../../../../../Contexts/Context";
-import User from "../../../../../Models/User";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { Alert } from "@mui/material";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
@@ -24,59 +28,70 @@ export interface IProps {
 export default function SignIn(props: IProps) {
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
+  const [notFound, setNotFound] = useState<boolean>(false);
 
-  // const [isValid, setIsValid] = useState<boolean>();
+  const {
+    setOpenDialog: setOpenModal,
+    isValid,
+    setIsValid,
+    setSnackbarInfo,
+    isFirstTime,
+    setIsFirstTime,
+    setName,
+    user,
+  } = useContext(Context);
 
-  const { setOpenModal, isValid, setIsValid, setSnackbarInfo, isFirstTime, setIsFirstTime } =
-    useContext(Context);
+  useEffect(() => {
+    setIsFirstTime(true);
+  }, []);
 
-    const storingUserData = useCallback((user: any) => {
-      localStorage.setItem("UserSID", user.usersSID);  
-      localStorage.setItem("UserFirstName", user.userFirstName);  
-      localStorage.setItem("UserLastName", user.userLastName);  
-      localStorage.setItem("UserUsername", user.userUsername);  
-    }, []);
+  const handleSubmit = useCallback(
+    async (event: any) => {
+      event.preventDefault();
 
-    useEffect( () => {
-      setIsFirstTime(true);
-    }, [])
+      if (
+        emailRef.current.value === "" ||
+        passwordRef.current.value === "" ||
+        !emailRef.current.value.includes("@")
+      ) {
+        setIsValid(false);
+        setIsFirstTime(false);
+      } else {
+        props.onLoadingHandler(true);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
+        var userExists: UserExists = {
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        };
 
-    const data = new FormData(event.currentTarget); //useRef or this.
-
-    if (emailRef.current.value == "" || passwordRef.current.value == "") {
-      setIsValid(false);
-    } else {
-      props.onLoadingHandler(true);
-
-      var user: UserExists = {
-        email: emailRef.current.value,
-        password: passwordRef.current.value,
-      };
-
-        var result = await IsUserExists(user); //Changing it
+        var result: any = await IsUserExists(userExists);
 
         if (result) {
-          // console.log(result);
-          props.onLoadingHandler(false);
-          setIsValid(true);
-          setOpenModal(false);
-          setSnackbarInfo({ message: "Login Succesful!", open: true });
-          // localStorage.setItem("UserId", result.valueOf());  
-          storingUserData(result);                           //Storing user object
+          localStorage.setItem("bearer", result);
+          var resultData = await GetUserByToken(result);
+          if (resultData) {
+            user.current = resultData;
+            props.onLoadingHandler(false);
+            setIsValid(true);
+            setOpenModal(false);
+            setSnackbarInfo({ message: "Login Succesful!", open: true });
+            setName(user.current.userFirstName + " " + user.current.userLastName);
+          } else {
+            props.onLoadingHandler(false);
+            setNotFound(true);
+            setIsValid(true);
+            setIsFirstTime(false);
+          }
         } else {
           props.onLoadingHandler(false);
-          setIsValid(false);
+          setNotFound(true);
+          setIsValid(true);
           setIsFirstTime(false);
         }
-
-    }
-
-  };
-
-
+      }
+    },
+    [emailRef.current, passwordRef.current]
+  );
 
   return (
     <Container component="main" maxWidth="xs">
@@ -95,6 +110,9 @@ export default function SignIn(props: IProps) {
           Sign in
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          {notFound && (
+            <Alert severity="error">Incorrect email or password!</Alert>
+          )}
           <TextField
             margin="normal"
             required
@@ -105,8 +123,14 @@ export default function SignIn(props: IProps) {
             autoComplete="email"
             autoFocus
             inputRef={emailRef}
-            error={isValid == false  && !isFirstTime}
-            helperText={isValid == false  && !isFirstTime ? "Required!" : " "}
+            error={(isValid === false && !isFirstTime) || notFound}
+            helperText={
+              isValid === false && !isFirstTime
+                ? "Required!"
+                : notFound
+                ? "Incorrect Email"
+                : " "
+            }
           />
           <TextField
             margin="normal"
@@ -118,10 +142,15 @@ export default function SignIn(props: IProps) {
             id="password"
             autoComplete="current-password"
             inputRef={passwordRef}
-            error={isValid == false && !isFirstTime }
-            helperText={isValid == false && !isFirstTime ? "Required!" : " "}
+            error={(isValid === false && !isFirstTime) || notFound}
+            helperText={
+              isValid === false && !isFirstTime
+                ? "Required!"
+                : notFound
+                ? "Incorrect Password"
+                : " "
+            }
           />
-
           <Button
             type="submit"
             fullWidth
@@ -130,13 +159,6 @@ export default function SignIn(props: IProps) {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>
