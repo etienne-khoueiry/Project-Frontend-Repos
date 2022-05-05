@@ -1,94 +1,72 @@
-import { Button } from "@mui/material";
+import React, { useCallback } from "react";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+import { GetCitiesByNameOnce } from "../../Services/CitiesApiCalls";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
-import { styled, alpha } from "@mui/material/styles";
-import React, { useCallback, useRef, useState } from "react";
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import { Grid } from "@mui/material";
 
-const SearchScene = () => {
-  const searchRef = useRef<any>("");
-
-  const navigate = useNavigate();
-
+export default function SearchScene() {
+  const [cities, setCities] = useState<any[]>([]);
+  const searchHandler = useCallback(async (event: any) => {
+    if (event.target.value.length > 2) {
+      setTimeout(async () => {
+        var get = await GetCitiesByNameOnce(event.target.value);
+        var cities = await get(
+          `https://localhost:7181/cities/${event.target.value}?pageIndex=${1}`
+        );
+        setCities(cities);
+      }, 50);
+    }
+  }, []);
   const [emptySearch, setEmptySearch] = useState<boolean>(false);
 
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto",
-    },
-  }));
+  const navigate = useNavigate();
+  const searchRef = React.useRef<any>("");
 
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
-
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "inherit",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
-  }));
-
-  const handleSearch = useCallback(() => {
-    if (searchRef.current.value == "") {
+  const handleSearch = React.useCallback(() => {
+    if (searchRef.current.value === "") {
       setEmptySearch(true);
     } else {
       navigate("/SearchResult/" + searchRef.current.value);
     }
   }, [searchRef.current.value]);
 
+  const enterPressedHandler = React.useCallback((event: any) => {
+    if (event.code === "Enter") {
+      handleSearch();
+    }
+  }, []);
   return (
-    <Search
-      style={{
-        border: "1px solid black",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <SearchIconWrapper sx={{ cursor: "pointer" }}>
-        <SearchIcon sx={{ cursor: "pointer" }} />
-      </SearchIconWrapper>
-      <StyledInputBase
-        placeholder="Search…"
-        inputProps={{ "aria-label": "search" }}
-        inputRef={searchRef}
-        error={emptySearch}
-        sx={{width: "75vw"}}
+    <Stack spacing={2}>
+      <Autocomplete
+        freeSolo
+        id="free-solo-2-demo"
+        disableClearable
+        options={cities.map((option: any) => option.city.cityName)}
+        onKeyPress={enterPressedHandler}
+        renderInput={(params) => (
+          <Grid container sx={{alignItems: "center"}} spacing={1}>
+            <Grid item xs={10} sm={10} md={11}>
+            <TextField
+              {...params}
+              label="Search"
+              InputProps={{
+                ...params.InputProps,
+                type: "search",
+              }}
+              onChange={searchHandler}
+              inputRef={searchRef}
+            />
+            </Grid>
+            <Grid item xs={2} sm={2} md={1} textAlign={"center"}>
+              <SearchRoundedIcon onClick={handleSearch} sx={{fontSize:"35px", cursor: "pointer"}}/>
+            </Grid>
+          </Grid>
+        )}
       />
-      <Button
-        sx={{
-          backgroundColor: "secondary.main",
-          "&:hover": { backgroundColor: "rgb(249 211 66 / 60%)" },
-        }}
-        onClick={handleSearch}
-      >
-        Search
-      </Button>
-    </Search>
+    </Stack>
   );
-};
-
-export default SearchScene;
+}

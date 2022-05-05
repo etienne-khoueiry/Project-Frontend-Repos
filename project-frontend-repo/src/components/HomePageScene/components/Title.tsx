@@ -26,10 +26,10 @@ export default function Title() {
 
   const navigate = useNavigate();
 
-  const { setOpenDialog } = useContext(Context);
+  const { setOpenDialog, user } = useContext(Context);
 
   const handleNewCity = useCallback(() => {
-    if (localStorage.getItem("UserSID")) {
+    if (user.current.usersSID) {
       navigate("/NewCity");
     } else {
       setOpenDialog(true);

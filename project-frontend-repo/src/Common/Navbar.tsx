@@ -31,7 +31,7 @@ const Navbar = () => {
   const settingRef = useRef<any>();
   const pagesRef = useRef<any>();
 
-  var { openDialog, setOpenDialog, isValid, setIsValid, setName } =
+  var { openDialog, setOpenDialog, isValid, setIsValid, setName, user, name } =
     useContext(Context);
 
   const [avatarNaming, setAvatarNaming] = useState<string | null>();
@@ -44,24 +44,29 @@ const Navbar = () => {
     null
   );
 
-  const handleOpenNavMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  }, []);
-  const handleOpenUserMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  }, []);
+  const handleOpenNavMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElNav(event.currentTarget);
+    },
+    []
+  );
+  const handleOpenUserMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElUser(event.currentTarget);
+    },
+    []
+  );
 
   useLayoutEffect(() => {
-    var firstLetterFirstName = String(
-      localStorage.getItem("UserFirstName")
-    ).substring(0, 1);
-    var firstLetterLastName = String(
-      localStorage.getItem("UserLastName")
-    ).substring(0, 1);
-    if (
-      localStorage.getItem("UserFirstName") &&
-      localStorage.getItem("UserLastName")
-    ) {
+    if (user.current.userFirstName && user.current.userLastName) {
+      var firstLetterFirstName = String(user.current.userFirstName).substring(
+        0,
+        1
+      );
+      var firstLetterLastName = String(user.current.userLastName).substring(
+        0,
+        1
+      );
       settings = ["Logout"];
       setIsValid(true);
       setAvatarNaming(
@@ -71,15 +76,12 @@ const Navbar = () => {
       settings = ["Login"];
       setAvatarNaming(null);
     }
-  }, [
-    localStorage.getItem("UserFirstName"),
-    localStorage.getItem("UserLastName"),
-  ]);
+  }, [name]);
 
   const handleCloseNavMenu = useCallback(() => {
     if (pagesRef.current.innerText.toUpperCase() === "FAVORITES") {
-      if (localStorage.getItem("UserSID")) {
-        navigate(`/Favorites/${localStorage.getItem("UserSID")}`);
+      if (user.current.usersSID) {
+        navigate(`/Favorites/${user.current.usersSID}`);
       } else {
         setOpenDialog(true);
       }
@@ -94,9 +96,13 @@ const Navbar = () => {
   const handleSettings = () => {
     if (settingRef.current.innerHTML === "Logout") {
       localStorage.clear();
+      user.current = {};
       setIsValid(false);
+      setAvatarNaming(null);
+      settings= ["Login"]
       setName("null");
       navigate("/");
+      
     } else if (settingRef.current.innerHTML === "Login") {
       setOpenDialog(!openDialog);
     }

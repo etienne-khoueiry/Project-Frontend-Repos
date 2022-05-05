@@ -5,87 +5,77 @@ import {
   CircularProgress,
   Fab,
   Grid,
-  Pagination,
 } from "@mui/material";
 import React, {
   useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
-  useRef,
   useState,
 } from "react";
 import { useParams } from "react-router";
+import NewReview from "./components/NewReview";
 import { Context } from "../../Contexts/Context";
+import RatingList from "./components/RatingList";
+import ReviewCard from "./components/ReviewCard";
 import { ReviewDTO } from "../../Models/ReviewDTO";
+import ImageContainer from "./components/ImageContainer";
+import NamingContainer from "./components/NamingContainer";
 import { GetCityById } from "../../Services/CitiesApiCalls";
 import { GetReviewsByCityId } from "../../Services/ReviewApiCalls";
 import PaginationComponent from "../HomePageScene/components/PaginationComponent";
-import ImageContainer from "./components/ImageContainer";
-import NamingContainer from "./components/NamingContainer";
-import NewReview from "./components/NewReview";
 import RatingAndFavoritesContainer from "./components/RatingAndFavoritesContainer";
-import RatingList from "./components/RatingList";
-import ReviewCard from "./components/ReviewCard";
 
 export interface IProps {
   review: ReviewDTO;
 }
 
+
 export default function CityDetailsScene() {
+
   const { id } = useParams();
 
-  // const reviews = useRef<any[]>([]);
-
-  const { setOpenDialog, reviews } = useContext(Context);
+  const { setOpenDialog, reviews, user } = useContext(Context);
 
   const [city, setCity] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [addNewReview, setAddNewReview] = useState<boolean>(false);
 
   useLayoutEffect(() => {
-    var res: any = "";
-    var userId = Number(localStorage.getItem("UserSID")) ?? 0;
+
+    var userId = Number(user.current.usersSID) ?? 0;
 
     const getCityById = async (id: number) => {
-      console.log("ccc");
-      // GetCityById(id, userId)
-      //   .then(async function (response: any) {
-      //     res = await response.data;
-      //     setCity(res);
-      //     reviews.current = res.reviews;
-      //     setIsLoading(false);
-      //   })
-      //   .catch(function (error) {
-      //     res = error;
-      //   });
       var cityResult = await GetCityById(id, userId);
       var reviewsResult = await GetReviewsByCityId(id, 1);
       if (cityResult && reviewsResult) {
         setCity(cityResult);
         reviews.current = reviewsResult;
-        console.log(reviews.current);
         setIsLoading(false);
       } else {
         setIsLoading(false);
       }
-      console.log("dddd");
-
     };
-    console.log("aaA");
+    
     getCityById(Number(id));
-    console.log("bbb");
 
   }, []);
 
   const NewReviewHandler = useCallback(
-    (newReview: any) => {
+    async (newReview: any) => {
+    var userId = Number(user.current.usersSID) ?? 0;
       setIsLoading(true);
-      reviews.current = [...reviews.current, newReview];
+      var cityResult = await GetCityById(Number(id), userId);
+      var reviewsResult = await GetReviewsByCityId(Number(id), 1);
+      if (cityResult && reviewsResult) {
+        setCity(cityResult);
+        reviews.current = reviewsResult;
+      } 
+      // reviews.current = [ newReview, ...reviews.current];
+
       setAddNewReview(false);
       setIsLoading(false);
     },
-    [reviews.current]
+    [reviews.current, user.current.usersSID, id]
   );
 
   const newReview = (
@@ -99,12 +89,12 @@ export default function CityDetailsScene() {
   );
 
   const handleNewReview = useCallback(() => {
-    if (!localStorage.getItem("UserSID")) {
+    if (!user.current.usersSID) {
       setOpenDialog(true);
     } else {
       setAddNewReview(true);
     }
-  }, [localStorage.getItem("UserSID")]);
+  }, [user.current.usersSID]);
 
   if (isLoading) {
     return (

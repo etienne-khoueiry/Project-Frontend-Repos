@@ -1,4 +1,5 @@
 import {
+  Alert,
   Backdrop,
   Box,
   Button,
@@ -14,7 +15,7 @@ import { styled } from "@mui/styles";
 import { useNavigate } from "react-router";
 import Country from "../../../Models/Country";
 import CreateCityDTO from "../../../Models/CreateCityDTO";
-import { CreateCity } from "../../../Services/CitiesApiCalls";
+import { CreateCity, GetCitiesByName } from "../../../Services/CitiesApiCalls";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import { GetAllCountries } from "../../../Services/CountryApiCalls";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
@@ -23,9 +24,9 @@ import React, {
   useCallback,
   useEffect,
   useReducer,
-  useRef,
   useState,
 } from "react";
+import validNumber from "../../../Common/Utilities/ValidRating";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
 
@@ -33,12 +34,15 @@ const Input = styled("input")({
   display: "none",
 });
 
-export default function () {
+
+
+export default function CityForm() {
   const navigate = useNavigate();
-  // const imageRef = useRef<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countries, setCountries] = useState<Country[]>([]);
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [isAlreadyExists, setIsAlreadyExists] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<any>();
 
   const initialValues = {
     CityName: "",
@@ -66,8 +70,6 @@ export default function () {
   } = inputValues;
 
   const reducerInputChange = (event: any) => {
-    // console.log(typeof event.target.files[0]);
-
     if (event.target.name === "CityImage") {
       dispatchFormValues({ [event.target.name]: event.target.files[0] });
     } else {
@@ -79,44 +81,64 @@ export default function () {
   const handleSubmit = useCallback(
     async (event: any) => {
       event.preventDefault();
+      setIsValid(true);
+      setErrorMessage("");
+      setIsAlreadyExists(false);
 
       if (
-        CityName == "" ||
-        CountryId == "" ||
-        RatingEnvironment == "" ||
-        RatingHealth == "" ||
-        RatingSecurity == "" ||
-        RatingTransportation == "" ||
-        CityImage == ""
+        CityName === "" ||
+        CountryId === "" ||
+        RatingEnvironment === "" ||
+        RatingHealth === "" ||
+        RatingSecurity === "" ||
+        RatingTransportation === "" ||
+        CityImage === ""
       ) {
+        setIsAlreadyExists(true);
+        setErrorMessage("All fields are required!");
+        setIsValid(false);
+      } else if (
+        !validNumber(Number(RatingEnvironment)) ||
+        !validNumber(Number(RatingHealth)) ||
+        !validNumber(Number(RatingSecurity)) ||
+        !validNumber(Number(RatingTransportation))
+      ) {
+        setIsAlreadyExists(true);
+        setErrorMessage("All ratings must be between 0 and 10");
         setIsValid(false);
       } else {
-        // console.log(imageRef);
         setIsLoading(true);
-          var generalRating =
-            (Number(RatingEnvironment) +
-              Number(RatingHealth) +
-              Number(RatingSecurity) +
-              Number(RatingTransportation)) /
-            4;
-          // var imageName = CityImage.split("\\");
-          var city: CreateCityDTO = {
-            cityName: CityName,
-            cityImage: CityImage,
-            countrySID: Number(CountryId),
-            generalRating: Number(generalRating.toFixed(1)),
-            ratingEnvironment: Number(RatingEnvironment),
-            ratingHealth: Number(RatingHealth),
-            ratingSecurity: Number(RatingSecurity),
-            ratingTransportation: Number(RatingTransportation),
-          };
-          // console.log(city);
+        var generalRating =
+          (Number(RatingEnvironment) +
+            Number(RatingHealth) +
+            Number(RatingSecurity) +
+            Number(RatingTransportation)) /
+          4;
+        var city: CreateCityDTO = {
+          cityName: CityName,
+          cityImage: CityImage,
+          countrySID: Number(CountryId),
+          generalRating: Number(generalRating.toFixed(1)),
+          ratingEnvironment: Number(RatingEnvironment),
+          ratingHealth: Number(RatingHealth),
+          ratingSecurity: Number(RatingSecurity),
+          ratingTransportation: Number(RatingTransportation),
+        };
+        var checkIsAlreadyExists = await GetCitiesByName(CityName, 1);
+        if (checkIsAlreadyExists.length > 0 || !checkIsAlreadyExists) {
+          setIsValid(false);
+          setIsAlreadyExists(true);
+          setIsLoading(false);
+          setErrorMessage("City already exists!");
+        } else {
+          console.log(city);
           var result = await CreateCity(city);
           if (result) {
             navigate("/");
-          }else{
+          } else {
             setIsLoading(false);
           }
+        }
       }
     },
     [
@@ -145,6 +167,7 @@ export default function () {
       <Backdrop sx={{ color: "#fff", zIndex: 10000 }} open={isLoading}>
         <CircularProgress color="secondary" />
       </Backdrop>
+      {isAlreadyExists && <Alert severity="error">{errorMessage}</Alert>}
       {!isLoading && (
         <Box component="form" noValidate sx={{ mt: 3 }}>
           <Grid container spacing={2} alignItems="center">
@@ -165,7 +188,9 @@ export default function () {
 
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Country</InputLabel>
+                <InputLabel id="demo-simple-select-label" error={!isValid}>
+                  Country
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -240,6 +265,8 @@ export default function () {
                 onChange={reducerInputChange}
                 error={!isValid}
                 helperText={!isValid ? "Required!" : " "}
+                InputProps={{ inputProps: { min: 0, max: 10 } }}
+                fullWidth
               />
             </Grid>
 
@@ -266,6 +293,8 @@ export default function () {
                 onChange={reducerInputChange}
                 error={!isValid}
                 helperText={!isValid ? "Required!" : " "}
+                InputProps={{ inputProps: { min: 0, max: 10 } }}
+                fullWidth
               />
             </Grid>
 
@@ -292,6 +321,8 @@ export default function () {
                 onChange={reducerInputChange}
                 error={!isValid}
                 helperText={!isValid ? "Required!" : " "}
+                InputProps={{ inputProps: { min: 0, max: 10 } }}
+                fullWidth
               />
             </Grid>
 
@@ -318,6 +349,8 @@ export default function () {
                 onChange={reducerInputChange}
                 error={!isValid}
                 helperText={!isValid ? "Required!" : " "}
+                InputProps={{ inputProps: { min: 0, max: 10 } }}
+                fullWidth
               />
             </Grid>
           </Grid>

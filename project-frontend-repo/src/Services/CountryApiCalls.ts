@@ -1,7 +1,10 @@
 import axios from "axios";
 import Country from "../Models/Country";
 
+
 const baseUrl = "https://localhost:7181/countries";
+
+
 
 
 const GetAllCountries = async (): Promise<boolean | Country> => {
@@ -20,6 +23,7 @@ const GetAllCountries = async (): Promise<boolean | Country> => {
     });
     return result;
 };
+
 
 
 

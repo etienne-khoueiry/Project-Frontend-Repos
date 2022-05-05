@@ -5,14 +5,16 @@ import { red } from "@mui/material/colors";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
+import { Context } from "../../../Contexts/Context";
 import CreateRatingDTO from "../../../Models/CreateRating";
 import CreateReviewDTO from "../../../Models/CreateReviewDTO";
 import { CreateRating } from "../../../Services/RatingApiCalls";
 import { CreateReview } from "../../../Services/ReviewApiCalls";
-import React, { useCallback, useReducer, useState } from "react";
+import validNumber from "../../../Common/Utilities/ValidRating";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
-import { Box, Button, Divider, Grid, TextField } from "@mui/material";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
+import { Alert, Box, Button, Divider, Grid, TextField } from "@mui/material";
+import React, { useCallback, useContext, useReducer, useState } from "react";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
 
@@ -27,6 +29,9 @@ export default function NewReview(props: IProps) {
   const navigate = useNavigate();
 
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<any>("");
+
+  const { user } = useContext(Context);
 
   const initialValues = {
     HealthRating: "",
@@ -65,6 +70,15 @@ export default function NewReview(props: IProps) {
         ReviewDescription === ""
       ) {
         setIsValid(false);
+        setErrorMessage("All fields are required!");
+      } else if (
+        !validNumber(Number(HealthRating)) ||
+        !validNumber(Number(EnvironmentRating)) ||
+        !validNumber(Number(SecurityRating)) ||
+        !validNumber(Number(TransportationRating))
+      ) {
+        setIsValid(false);
+        setErrorMessage("All ratings must be between 0 and 10!");
       } else {
         setIsValid(true);
         var generalRating =
@@ -88,7 +102,7 @@ export default function NewReview(props: IProps) {
           reviewDescription: ReviewDescription,
           reviewDate: new Date(),
           ratingSID: ratingSID,
-          userSID: Number(localStorage.getItem("UserSID")),
+          userSID: Number(user.current.usersSID),
           reviewDislikes: 0,
           reviewLikes: 0,
           citySID: CitySID,
@@ -102,10 +116,10 @@ export default function NewReview(props: IProps) {
             rating: rating,
             review: review,
             user: {
-              usersSID: localStorage.getItem("UserSID"),
-              userFirstName: localStorage.getItem("UserFirstName"),
-              userLastName: localStorage.getItem("UserLastName"),
-              userEmail: localStorage.getItem("UserEmail"),
+              usersSID: user.current.usersSID,
+              userFirstName: user.current.userFirstName,
+              userLastName: user.current.userLastName,
+              userEmail: user.current.userEmail,
             },
           };
           NewReviewHandler(newReview);
@@ -120,22 +134,20 @@ export default function NewReview(props: IProps) {
       ReviewDescription,
     ]
   );
-
   return (
     <div>
       <Card>
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-              {localStorage.getItem("UserFirstName")?.substring(0, 1)}
-              {localStorage.getItem("UserLastName")?.substring(0, 1)}
+              {`${user.current.userFirstName?.substring(0,1)}${user.current.userLastName?.substring(0,1)}`}
             </Avatar>
           }
-          title={`${localStorage.getItem(
-            "UserFirstName"
-          )} ${localStorage.getItem("UserLastName")}`}
+          title={`${user.current.userFirstName} ${user.current.userLastName}`}
         />
-        <CardContent>
+
+        <CardContent sx={{display:"flex", justifyContent: "center", flexDirection: "column", alignItems:"center"}}>
+          {!isValid && <Alert severity="error">{errorMessage}</Alert>}
           <Box
             sx={{
               display: "flex",
@@ -187,6 +199,7 @@ export default function NewReview(props: IProps) {
                     type="number"
                     onChange={reducerInputChange}
                     error={!isValid}
+                    InputProps={{ inputProps: { min: 0, max: 10 } }}
                     helperText={!isValid ? "Required!" : " "}
                   />
                 </Box>
@@ -219,6 +232,7 @@ export default function NewReview(props: IProps) {
                     type="number"
                     onChange={reducerInputChange}
                     error={!isValid}
+                    InputProps={{ inputProps: { min: 0, max: 10 } }}
                     helperText={!isValid ? "Required!" : " "}
                   />
                 </Box>
@@ -250,6 +264,7 @@ export default function NewReview(props: IProps) {
                     type="number"
                     onChange={reducerInputChange}
                     error={!isValid}
+                    InputProps={{ inputProps: { min: 0, max: 10 } }}
                     helperText={!isValid ? "Required!" : " "}
                   />
                 </Box>
@@ -282,6 +297,7 @@ export default function NewReview(props: IProps) {
                     type="number"
                     onChange={reducerInputChange}
                     error={!isValid}
+                    InputProps={{ inputProps: { min: 0, max: 10 } }}
                     helperText={!isValid ? "Required!" : " "}
                   />
                 </Box>

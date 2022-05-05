@@ -1,7 +1,12 @@
 import axios from "axios";
 import CreateRatingDTO from "../Models/CreateRating";
 
+
+
+
 const baseUrl = "https://localhost:7181/ratings";
+
+
 
 const CreateRating = async (rating: CreateRatingDTO): Promise<number> => {
     var data = JSON.stringify(rating);
@@ -24,6 +29,8 @@ const CreateRating = async (rating: CreateRatingDTO): Promise<number> => {
     });
     return await result;
 }
+
+
 
 
 export {CreateRating};

@@ -8,12 +8,10 @@ import React, {
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import GoogleLogin from "react-google-login";
 import TextField from "@mui/material/TextField";
 import CssBaseline from "@mui/material/CssBaseline";
 import {
-  CreateUser,
-  GetUserByEmail,
+  GetUserByToken,
   IsUserExists,
 } from "../../../../../Services/UserApiCalls";
 import Container from "@mui/material/Container";
@@ -21,9 +19,7 @@ import Typography from "@mui/material/Typography";
 import UserExists from "../../../../../Models/UserExists";
 import { Context } from "../../../../../Contexts/Context";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { storingUserData } from "../../../../../Common/Utilities/StoringData";
 import { Alert } from "@mui/material";
-import User from "../../../../../Models/User";
 
 export interface IProps {
   onLoadingHandler(loading: boolean): void;
@@ -42,6 +38,7 @@ export default function SignIn(props: IProps) {
     isFirstTime,
     setIsFirstTime,
     setName,
+    user,
   } = useContext(Context);
 
   useEffect(() => {
@@ -62,20 +59,29 @@ export default function SignIn(props: IProps) {
       } else {
         props.onLoadingHandler(true);
 
-        var user: UserExists = {
+        var userExists: UserExists = {
           email: emailRef.current.value,
           password: passwordRef.current.value,
         };
 
-        var result: any = await IsUserExists(user); //Changing it
+        var result: any = await IsUserExists(userExists);
 
         if (result) {
-          props.onLoadingHandler(false);
-          setIsValid(true);
-          setOpenModal(false);
-          setSnackbarInfo({ message: "Login Succesful!", open: true });
-          storingUserData(result); //Storing user object
-          setName(result.userFirstName + " " + result.userLastName);
+          localStorage.setItem("bearer", result);
+          var resultData = await GetUserByToken(result);
+          if (resultData) {
+            user.current = resultData;
+            props.onLoadingHandler(false);
+            setIsValid(true);
+            setOpenModal(false);
+            setSnackbarInfo({ message: "Login Succesful!", open: true });
+            setName(user.current.userFirstName + " " + user.current.userLastName);
+          } else {
+            props.onLoadingHandler(false);
+            setNotFound(true);
+            setIsValid(true);
+            setIsFirstTime(false);
+          }
         } else {
           props.onLoadingHandler(false);
           setNotFound(true);
@@ -86,49 +92,6 @@ export default function SignIn(props: IProps) {
     },
     [emailRef.current, passwordRef.current]
   );
-
-  const responseGoogle = useCallback(async (response: any) => {
-    props.onLoadingHandler(false);
-
-    var res = await GetUserByEmail(response.profileObj.email);
-    if (res) {
-      setIsValid(true);
-      setOpenModal(false);
-      setSnackbarInfo({ message: "Login Succesful!", open: true });
-      var user: any = {
-        usersSID: res[0].usersSID,
-        userFirstName: response.profileObj.givenName,
-        userLastName: response.profileObj.familyName,
-        userUsername: response.profileObj.email,
-      };
-      storingUserData(user); //Storing user object
-      setName(user.userFirstName + " " + user.userLastName);
-    } else {
-      var user: any = {
-        userUsername: response.profileObj.name,
-        userLastName: response.profileObj.familyName,
-        userFirstName: response.profileObj.givenName,
-        userEmail: response.profileObj.email,
-        userPassword: response.profileObj.googleId,
-      };
-      var result = await CreateUser(user);
-
-      if (result != 0) {
-        props.onLoadingHandler(false);
-        setIsValid(true);
-        setOpenModal(false);
-        setSnackbarInfo({ message: "Login Succesful!", open: true });
-        user.usersSID = Number(result);
-        storingUserData(user);
-        setName(user.userFirstName + " " + user.userLastName);
-      } else {
-        props.onLoadingHandler(false);
-        setIsValid(false);
-        setIsFirstTime(false);
-      }
-      props.onLoadingHandler(false);
-    }
-  }, []);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -160,9 +123,9 @@ export default function SignIn(props: IProps) {
             autoComplete="email"
             autoFocus
             inputRef={emailRef}
-            error={(isValid == false && !isFirstTime) || notFound}
+            error={(isValid === false && !isFirstTime) || notFound}
             helperText={
-              isValid == false && !isFirstTime
+              isValid === false && !isFirstTime
                 ? "Required!"
                 : notFound
                 ? "Incorrect Email"
@@ -179,24 +142,15 @@ export default function SignIn(props: IProps) {
             id="password"
             autoComplete="current-password"
             inputRef={passwordRef}
-            error={(isValid == false && !isFirstTime) || notFound}
+            error={(isValid === false && !isFirstTime) || notFound}
             helperText={
-              isValid == false && !isFirstTime
+              isValid === false && !isFirstTime
                 ? "Required!"
                 : notFound
                 ? "Incorrect Password"
                 : " "
             }
           />
-          <Box textAlign={"center"}>
-            <GoogleLogin
-              clientId="717241890463-4pv3d7a1te6ir5qf6lbfetjdfp71g2jg.apps.googleusercontent.com"
-              buttonText="Sign In With Google"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              cookiePolicy={"single_host_origin"}
-            />
-          </Box>
           <Button
             type="submit"
             fullWidth

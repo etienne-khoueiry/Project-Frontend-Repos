@@ -2,14 +2,10 @@ import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
-import ThumbDownRoundedIcon from "@mui/icons-material/ThumbDownRounded";
-import { Badge, Box, Grid, Tooltip } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
@@ -143,8 +139,8 @@ export default function ReviewCard(props: IProps) {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {user.userFirstName.substring(0, 1)}
-            {user.userLastName.substring(0, 1)}
+            {user.userFirstName?.substring(0, 1)}
+            {user.userLastName?.substring(0, 1)}
           </Avatar>
         }
         title={`${user.userFirstName} ${user.userLastName}`}
@@ -156,25 +152,6 @@ export default function ReviewCard(props: IProps) {
           {review.review.reviewDescription}
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <Tooltip title="4 Likes">
-            <Badge badgeContent={review.review.reviewLikes} color="secondary">
-              <ThumbUpRoundedIcon />
-            </Badge>
-          </Tooltip>
-        </IconButton>
-        <IconButton aria-label="share">
-          <Tooltip title="4 Dislikes">
-            <Badge
-              badgeContent={review.review.reviewDislikes}
-              color="secondary"
-            >
-              <ThumbDownRoundedIcon />
-            </Badge>
-          </Tooltip>
-        </IconButton>
-      </CardActions>
     </Card>
   );
 }

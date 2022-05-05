@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import {
   CreateUser,
   GetUserByEmail,
+  GetUserByToken,
 } from "../../../../../Services/UserApiCalls";
 import User from "../../../../../Models/User";
 import TextField from "@mui/material/TextField";
@@ -27,7 +28,7 @@ export interface IProps {
   onLoadingHandler(loading: boolean): void;
 }
 
-const containsNumber = (str: string) => {
+const containsNumber = (str: any) => {
   return /\d/.test(str);
 };
 
@@ -47,6 +48,7 @@ export default function SignUp(props: IProps) {
     setIsFirstTime,
     setSnackbarInfo,
     setName,
+    user
   } = useContext(Context);
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function SignUp(props: IProps) {
       event.preventDefault();
       props.onLoadingHandler(true);
 
-      var user: User = {
+      var userObj: User = {
         userUsername: usernameRef.current.value,
         userLastName: lastNameRef.current.value,
         userFirstName: firstNameRef.current.value,
@@ -68,31 +70,38 @@ export default function SignUp(props: IProps) {
       };
 
       if (
-        user.userEmail === "" ||
-        user.userFirstName === "" ||
-        user.userLastName === "" ||
-        user.userPassword === "" ||
-        user.userUsername === "" ||
-        !user.userEmail.includes("@") ||
-        containsNumber(user.userFirstName) ||
-        containsNumber(user.userLastName)
+        userObj.userEmail === "" ||
+        userObj.userFirstName === "" ||
+        userObj.userLastName === "" ||
+        userObj.userPassword === "" ||
+        userObj.userUsername === "" ||
+        !userObj.userEmail?.includes("@") ||
+        containsNumber(userObj.userFirstName) ||
+        containsNumber(userObj.userLastName)
       ) {
         setIsValid(false);
         setIsFirstTime(false);
       } else {
-        var checkIsEmailExists = await GetUserByEmail(user.userEmail);
+        var checkIsEmailExists = await GetUserByEmail(userObj.userEmail);
 
         if (!checkIsEmailExists) {
-          var result = await CreateUser(user);
+          var result: any = await CreateUser(userObj);
 
-          if (result !== 0) {
-            props.onLoadingHandler(false);
-            setIsValid(true);
-            setOpenModal(false);
-            setSnackbarInfo({ message: "Login Succesful!", open: true });
-            user.usersSID = Number(result);
-            storingUserData(user);
-            setName(user.userFirstName + " " + user.userLastName);
+          if (result) {
+            localStorage.setItem("bearer", result);
+            var resultData = await GetUserByToken(result);
+            if(resultData){
+              user.current = resultData;
+              props.onLoadingHandler(false);
+              setIsValid(true);
+              setOpenModal(false);
+              setSnackbarInfo({ message: "SignUp Succesful!", open: true });
+              setName(user.current.userFirstName + " " + user.current.userLastName);
+            }else{
+              props.onLoadingHandler(false);
+              setIsValid(false);
+              setIsFirstTime(false);  
+            }
           } else {
             props.onLoadingHandler(false);
             setIsValid(false);

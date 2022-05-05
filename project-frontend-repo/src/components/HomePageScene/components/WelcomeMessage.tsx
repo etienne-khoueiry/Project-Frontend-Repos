@@ -2,11 +2,18 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import React, { useContext, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { Context } from "../../../Contexts/Context";
 
 export default function WelcomeMessage() {
   const { name } = useContext(Context);
+  const [isNameNull, setIsNameNull] = useState<boolean>(name.includes("undefined") || name.includes("null"));
+
+  useLayoutEffect( () => {
+    setIsNameNull(name.includes("undefined") || name.includes("null"));
+  },[name]);
+
+
   return (
     <Paper
       sx={{
@@ -57,8 +64,8 @@ export default function WelcomeMessage() {
               color="inherit"
               gutterBottom
             >
-              {!name.includes("null") && "Welcome " + name + "!"}
-              {name.includes("null") && "Welcome!"}
+              {!isNameNull && "Welcome " + name + "!"}
+              {isNameNull && "Welcome!"}
             </Typography>
           </Box>
         </Grid>

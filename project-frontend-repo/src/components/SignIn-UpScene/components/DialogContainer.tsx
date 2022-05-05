@@ -30,7 +30,7 @@ export default function DialogContainer() {
           <DialogTitle id="responsive-dialog-title">
             {"Please Login to continue!"}
           </DialogTitle>
-          <DialogContent sx={{ height: "100%" }}>
+          <DialogContent sx={fullScreen ? { height: "90vh" } : {}}>
             <Box sx={{ position: "absolute", right: "5px", top: "5px" }}>
               <CloseRoundedIcon
                 onClick={handleClose}

@@ -1,5 +1,7 @@
-import React, { createContext, useRef, useState } from "react";
-import Rating from "../Models/Rating";
+import React, { createContext, useLayoutEffect, useRef, useState } from "react";
+
+
+import { GetUserByToken } from "../Services/UserApiCalls";
 
 export const Context = createContext<any>({
   openDialog: false,
@@ -16,9 +18,14 @@ export const Context = createContext<any>({
   setCities(city: any[]){},
   isLoading: false,
   setIsLoading(open: boolean) {},
-  reviews: []
-  // ratings: {},
-  // setRatings(rating: Rating){}
+  reviews: [],
+  user: {},
+  loadPage: true,
+  setLoadPage(load: boolean) {},
+  openDropdownSearch: false,
+  setOpendDropdownSearch(load: boolean) {},
+  cityRating: [],
+  setCityRating(rating: any){}
 });
 
 const ContextProvider = (props: any) => {
@@ -27,11 +34,31 @@ const ContextProvider = (props: any) => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const [cities, setCities] = useState<any>();
-  // const [ratings, setRatings] = useState<any>();
   const [snackbarInfo, setSnackbarInfo] = useState<{open: boolean, message: string}>({open: false, message: ''});
-  const [name, setName] = useState<any>(`${localStorage.getItem("UserFirstName")} ${localStorage.getItem("UserLastName")}`);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const reviews = useRef<any>();
+  const user = useRef<any>({});
+  const [name, setName] = useState<any>(`${user.current.userFirstName} ${user.current.userLastName}`);
+  const [loadPage, setLoadPage] = useState<boolean>(true);
+  const[openDropdownSearch, setOpendDropdownSearch] = useState<boolean>(false);
+  const[cityRating, setCityRating] = useState<any>();
+  
+  useLayoutEffect( () => {
+
+    const getUser = async () => {
+      const bearer = localStorage.getItem("bearer");
+      if(bearer){
+        var result = await GetUserByToken(bearer);
+        if(result){
+          user.current = result;
+          setName(`${user.current.userFirstName} ${user.current.userLastName}`)
+        }
+      }
+      setLoadPage(false);
+    }
+
+    getUser();
+  }, []);
 
 
   return (
@@ -51,9 +78,14 @@ const ContextProvider = (props: any) => {
         setCities: setCities,
         isLoading: isLoading,
         setIsLoading: setIsLoading,
-        reviews: reviews
-        // ratings: ratings,
-        // setRatings: setRatings
+        reviews: reviews,
+        user: user,
+        loadPage: loadPage,
+        setLoadPage: setLoadPage,
+        openDropdownSearch: openDropdownSearch,
+        setOpendDropdownSearch: setOpendDropdownSearch,
+        cityRating: cityRating,
+        setCityRating: setCityRating
       }}
     >
       {props.children}

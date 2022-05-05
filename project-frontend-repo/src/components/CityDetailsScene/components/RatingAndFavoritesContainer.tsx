@@ -23,7 +23,7 @@ export interface IProps {
 export default function RatingAndFavoritesContainer(props: IProps) {
   const { id } = useParams();
 
-  const { setOpenDialog } = useContext(Context);
+  const { setOpenDialog, user } = useContext(Context);
 
   const avatarRatingColor = RatingAvatarColor(props.generalRating);
   const [addToFavorites, setAddToFavorites] = useState<boolean>(
@@ -32,8 +32,8 @@ export default function RatingAndFavoritesContainer(props: IProps) {
   const ref = useRef(props.isFavorites);
 
   const handleFavorites = useCallback(() => {
-    if (localStorage.getItem("UserSID")) {
-      setAddToFavorites(!addToFavorites);
+    if (user.current.usersSID) {
+      setAddToFavorites(prevAddToFavorites => !prevAddToFavorites);
       ref.current = !ref.current;
     } else {
       setOpenDialog(true);
@@ -41,19 +41,19 @@ export default function RatingAndFavoritesContainer(props: IProps) {
   }, [addToFavorites]);
 
   useEffect(() => {
-    return () => {
-      if (ref.current != props.isFavorites && localStorage.getItem("UserSID")) {
+    setTimeout( () => {
+      if (ref.current !== props.isFavorites && user.current.usersSID) {
         if (ref.current) {
-          AddToFavorites(Number(id), Number(localStorage.getItem("UserSID")));
+          AddToFavorites(Number(id), Number(user.current.usersSID));
         } else {
           DeleteFromFavorites(
             Number(id),
-            Number(localStorage.getItem("UserSID"))
+            Number(user.current.usersSID)
           );
         }
       }
-    };
-  }, []);
+    }, 1000);
+  }, [ref.current, user.current.usersSID, id]);
 
   return (
     <Box sx={{ margin: "10px" }}>

@@ -5,7 +5,6 @@ import Cities from "./components/Cities";
 import WelcomeMessage from "./components/WelcomeMessage";
 import SearchLayout from "../../Layouts/SearchLayout/SearchLayout";
 import PaginationComponent from "./components/PaginationComponent";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 
 export default function HomePageScene() {

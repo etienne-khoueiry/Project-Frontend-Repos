@@ -13,7 +13,7 @@ export default function NamingContainer(props: IProps) {
     <Box sx={{ margin: "10px", marginLeft: "20px" }}>
       <Box>
         <Typography
-          variant="h5"
+          variant="h4"
           gutterBottom
           component="div"
           sx={{ fontWeight: "bold" }}
@@ -22,7 +22,7 @@ export default function NamingContainer(props: IProps) {
         </Typography>
       </Box>
       <Box>
-        <Typography variant="h6" gutterBottom component="div">
+        <Typography variant="h5" gutterBottom component="div">
           {props.countryName} &nbsp;
           <ReactCountryFlag countryCode={props.countryCode} svg />
         </Typography>

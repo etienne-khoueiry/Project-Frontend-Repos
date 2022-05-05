@@ -1,7 +1,13 @@
 import axios from "axios";
 import CreateReviewDTO from "../Models/CreateReviewDTO";
 
+
+
+
 const baseUrl = "https://localhost:7181/reviews";
+
+
+
 
 const GetReviewsByCityId = async (CityId: number, pageIndex: number): Promise<any> => {
   var config: any = {
@@ -20,6 +26,10 @@ const GetReviewsByCityId = async (CityId: number, pageIndex: number): Promise<an
     });
   return result;
 };
+
+
+
+
 
 const CreateReview = async (review: CreateReviewDTO): Promise<boolean> => {
   var data = JSON.stringify(review);
@@ -43,5 +53,8 @@ const CreateReview = async (review: CreateReviewDTO): Promise<boolean> => {
 
   return await result;
 };
+
+
+
 
 export { GetReviewsByCityId, CreateReview };
