@@ -1,13 +1,12 @@
 import CityPost from "./CityPost";
 import { useParams } from "react-router";
-import CityDTO from "../../../Models/CityDTO";
-import React, { useContext, useEffect, useState } from "react";
+import { Context } from "../../../Contexts/Context";
 import { Box, Grid, Typography } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import CityPostSkeleton from "./Skeletons/CityPostSkeleton";
-import { GetCities, GetCitiesByName } from "../../../Services/CitiesApiCalls";
+import React, { useContext, useEffect, useState } from "react";
 import { GetFavoritesByUserId } from "../../../Services/FavoritesApiCall";
-import { Context } from "../../../Contexts/Context";
+import { GetCities, GetCitiesByName } from "../../../Services/CitiesApiCalls";
 
 
 const Skeletons = ["", "", "", "", "", "", "", ""];
@@ -46,7 +45,6 @@ export default function Cities() {
 
   const { cities, setCities } = useContext(Context);
 
-  // const [cities, setCities] = useState<CityDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

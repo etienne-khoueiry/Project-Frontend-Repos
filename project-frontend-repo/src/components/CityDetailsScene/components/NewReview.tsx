@@ -13,8 +13,8 @@ import { CreateReview } from "../../../Services/ReviewApiCalls";
 import validNumber from "../../../Common/Utilities/ValidRating";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import LandscapeRoundedIcon from "@mui/icons-material/LandscapeRounded";
-import { Alert, Box, Button, Divider, Grid, TextField } from "@mui/material";
 import React, { useCallback, useContext, useReducer, useState } from "react";
+import { Alert, Box, Button, Divider, Grid, TextField } from "@mui/material";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 import EmojiTransportationRoundedIcon from "@mui/icons-material/EmojiTransportationRounded";
 
@@ -329,7 +329,7 @@ export default function NewReview(props: IProps) {
           >
             <Button
               variant="contained"
-              sx={{ backgroundColor: "secondary.main", color: "black" }}
+              sx={{ backgroundColor: "secondary.main", color: "black", "&:hover": { backgroundColor: "rgb(249 211 66 / 60%)" }, }}
               onClick={handleSubmit}
             >
               POST

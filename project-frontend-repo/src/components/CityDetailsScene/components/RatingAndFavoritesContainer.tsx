@@ -52,7 +52,7 @@ export default function RatingAndFavoritesContainer(props: IProps) {
           );
         }
       }
-    }, 1000);
+    }, 500);
   }, [ref.current, user.current.usersSID, id]);
 
   return (
