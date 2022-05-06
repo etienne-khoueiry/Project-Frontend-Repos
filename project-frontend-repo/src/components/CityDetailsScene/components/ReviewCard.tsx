@@ -144,7 +144,7 @@ export default function ReviewCard(props: IProps) {
           </Avatar>
         }
         title={`${user.userFirstName} ${user.userLastName}`}
-        subheader={review.review.reviewDate}
+        subheader={review.review.reviewDate.split(" ")[0]}
       />
       <CardContent>
         <RatingList review={review} />

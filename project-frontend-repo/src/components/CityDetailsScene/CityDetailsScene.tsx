@@ -55,7 +55,7 @@ export default function CityDetailsScene() {
         setIsLoading(false);
       }
     };
-    
+
     getCityById(Number(id));
 
   }, []);
@@ -70,7 +70,6 @@ export default function CityDetailsScene() {
         setCity(cityResult);
         reviews.current = reviewsResult;
       } 
-      // reviews.current = [ newReview, ...reviews.current];
 
       setAddNewReview(false);
       setIsLoading(false);

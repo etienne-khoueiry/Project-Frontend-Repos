@@ -27,6 +27,7 @@ export default function PaginationComponent({}: Props) {
 
     }
     if (result) {
+      window.scrollTo(0, 0);
       setCities(result);
       setIsLoading(false);
     } else if(resultReviews){

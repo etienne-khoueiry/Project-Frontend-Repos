@@ -37,6 +37,7 @@ export default function Routers() {
             path="/SearchResult/:search"
             element={<SearchResultLayout />}
           />
+           <Route path="*" element={<HomePageLayout />} />
         </Routes>
       </Router>
     </div>
